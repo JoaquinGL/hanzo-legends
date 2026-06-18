@@ -1,6 +1,6 @@
-# Gatones y Mazmorras
+# Hanzo Legends
 
-Experiencia musical interactiva para conocer a los héroes y villanos felinos de la leyenda de Gatones y Mazmorras.
+Presentación interactiva de los departamentos de **Hanzo**. Cada departamento se muestra como una tarjeta con animaciones 3D, estadísticas y sonido, pensada para conocer el equipo y su rol dentro de la compañía de forma visual y memorable.
 
 ## Requisitos
 
@@ -32,6 +32,6 @@ Experiencia musical interactiva para conocer a los héroes y villanos felinos de
 | `npm run lint` | Comprueba tipos con TypeScript |
 | `npm run clean` | Elimina la carpeta `dist/` |
 
-## Añadir personajes
+## Añadir departamentos
 
-Consulta [AGENTS.md](AGENTS.md) para la guía de cómo añadir o modificar personajes en `src/data.ts`.
+Los departamentos se definen en `src/data.ts`. Consulta [AGENTS.md](AGENTS.md) para la guía de cómo añadir, editar o eliminar tarjetas: el sistema aplica automáticamente colores, animaciones 3D, estadísticas y arpegios de sonido a cada entrada.
