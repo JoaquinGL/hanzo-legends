@@ -1,20 +1,37 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# Gatones y Mazmorras
 
-# Run and deploy your AI Studio app
+Experiencia musical interactiva para conocer a los héroes y villanos felinos de la leyenda de Gatones y Mazmorras.
 
-This contains everything you need to run your app locally.
+## Requisitos
 
-View your app in AI Studio: https://ai.studio/apps/f123b65c-e3a6-493e-953a-6c86b2cfe652
+- Node.js 22+ (usa `nvm use` si tienes [nvm](https://github.com/nvm-sh/nvm))
 
-## Run Locally
+## Desarrollo local
 
-**Prerequisites:**  Node.js
+1. Instala dependencias:
 
+   ```bash
+   npm install
+   ```
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+2. Arranca el servidor de desarrollo:
+
+   ```bash
+   npm run dev
+   ```
+
+   La app estará disponible en [http://localhost:3000](http://localhost:3000).
+
+## Scripts
+
+| Comando | Descripción |
+|---|---|
+| `npm run dev` | Servidor de desarrollo con Vite |
+| `npm run build` | Build de producción en `dist/` |
+| `npm run preview` | Previsualiza el build de producción |
+| `npm run lint` | Comprueba tipos con TypeScript |
+| `npm run clean` | Elimina la carpeta `dist/` |
+
+## Añadir personajes
+
+Consulta [AGENTS.md](AGENTS.md) para la guía de cómo añadir o modificar personajes en `src/data.ts`.

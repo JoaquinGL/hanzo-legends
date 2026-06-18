@@ -1,6 +1,5 @@
 {
   "name": "Gatones y Mazmorras",
   "description": "Una experiencia musical interactiva para conocer a los héroes y villanos felinos de la leyenda de Gatones y Mazmorras.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "requestFramePermissions": []
 }
