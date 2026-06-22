@@ -24,7 +24,6 @@ export const TrailOverlay: React.FC<TrailOverlayProps> = ({
   const pathRef = useRef<SVGPathElement>(null);
   const dummyFlightRef = useRef<SVGPathElement>(null);
   const cameraLayerRef = useRef<HTMLDivElement>(null);
-  const replicaBarRef = useRef<HTMLDivElement>(null);
 
   const onCompleteRef = useRef(onComplete);
   const onProgressRef = useRef(onProgress);
@@ -63,8 +62,11 @@ export const TrailOverlay: React.FC<TrailOverlayProps> = ({
   const x1 = cx + cardW / 2;
   const y0 = cy - cardH / 2;
   const y2 = cy + cardH / 2;
-  const barHeight = Math.abs(startY - startYTop);
   const vLimit = startYTop - 80;
+  // Start below the visible bar base so the round linecap is clipped by the viewport edge
+  const trailStartY = startY + barWidth / 2 + 2;
+  const verticalPrefixLength = Math.abs(vLimit - trailStartY);
+  const STEM_PHASE = 0.07; // ~300ms stem growth before the random flight path continues
 
   // Define persistent camera scroll offset
   const Y_offset = -dimensions.height * 1.3;
@@ -97,7 +99,7 @@ export const TrailOverlay: React.FC<TrailOverlayProps> = ({
 
   // Flight Path (Dynamically randomized yet viewport-bound per click mount)
   const getFlightPathData = (): string => {
-    const prefix = `M ${startX} ${startYTop + 10} L ${startX} ${vLimit}`;
+    const prefix = `M ${startX} ${trailStartY} L ${startX} ${vLimit}`;
     if (!pathParamsRef.current) return `${prefix} L ${x1} -200`;
 
     const { style, vars } = pathParamsRef.current;
@@ -216,13 +218,14 @@ export const TrailOverlay: React.FC<TrailOverlayProps> = ({
 
     const cameraBezier = solveCubicBezier(0.45, 0, 0.85, 1);
 
-    let animId: number;
-    const startTime = performance.now();
-    const duration = 4200; // Indiana Jones high fidelity journey of 4.2s
+    const getStemReveal = (normalizedT: number) => {
+      if (normalizedT >= STEM_PHASE) return 1;
+      const p = normalizedT / STEM_PHASE;
+      return 1 - Math.pow(1 - p, 3);
+    };
 
-    const tick = (now: number) => {
-      const elapsed = now - startTime;
-      const t = Math.min(elapsed / duration, 1);
+    const applyFrame = (normalizedT: number) => {
+      const t = Math.min(Math.max(normalizedT, 0), 1);
 
       // Camera Y position: completely smooth progressive cubic-bezier ease
       const t_start = 0.15;
@@ -276,11 +279,16 @@ export const TrailOverlay: React.FC<TrailOverlayProps> = ({
         flightFraction = flightLength / totalLength;
       }
 
+      const verticalFraction = totalLength > 0
+        ? Math.min(verticalPrefixLength / totalLength, flightFraction)
+        : 0;
+
+      const stemReveal = verticalFraction * getStemReveal(t);
+
       // Drawing progress function: completely continuous
       let drawProgress = 0;
       if (t <= 0.45) {
         const p = t / 0.45;
-        // Linear or slightly eased flight drawing
         drawProgress = p * flightFraction;
       } else if (t <= 0.80) {
         const p = (t - 0.45) / 0.35;
@@ -289,6 +297,8 @@ export const TrailOverlay: React.FC<TrailOverlayProps> = ({
       } else {
         drawProgress = 1.0;
       }
+
+      drawProgress = Math.max(stemReveal, drawProgress);
 
       // Apply camera translate transform to the whole world container
       if (cameraLayerRef.current) {
@@ -305,6 +315,17 @@ export const TrailOverlay: React.FC<TrailOverlayProps> = ({
         onProgressRef.current(t);
       }
 
+      return t;
+    };
+
+    let animId: number;
+    const startTime = performance.now();
+    const duration = 4200; // Indiana Jones high fidelity journey of 4.2s
+
+    const tick = (now: number) => {
+      const elapsed = now - startTime;
+      const t = applyFrame(elapsed / duration);
+
       if (t < 1) {
         animId = requestAnimationFrame(tick);
       } else {
@@ -312,9 +333,10 @@ export const TrailOverlay: React.FC<TrailOverlayProps> = ({
       }
     };
 
+    applyFrame(0);
     animId = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(animId);
-  }, [id, dimensions.height, cx, startX, Y_offset, y0, y2, x0, x1]);
+  }, [id, dimensions.height, cx, startX, Y_offset, y0, y2, x0, x1, verticalPrefixLength, STEM_PHASE]);
 
   const activeStrokeWidth = barWidth;
 
@@ -329,24 +351,6 @@ export const TrailOverlay: React.FC<TrailOverlayProps> = ({
         className="absolute inset-0 w-full h-full pointer-events-none"
         style={{ transform: `translateY(0px)`, transition: 'none' }}
       >
-        {/* High-fidelity replica of the selected bar */}
-        <div
-          ref={replicaBarRef}
-          style={{
-            position: 'absolute',
-            left: `${startX - barWidth / 2}px`,
-            top: `${startYTop}px`,
-            width: `${barWidth}px`,
-            height: `${barHeight}px`,
-            backgroundColor: color,
-            borderTopLeftRadius: '9999px',
-            borderTopRightRadius: '9999px',
-            borderBottomLeftRadius: '0px',
-            borderBottomRightRadius: '0px',
-            opacity: 1,
-          }}
-        />
-
         <svg className="w-full h-full block overflow-visible">
           <path
             ref={pathRef}

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Character } from '../types';
-import { Shield, Skull, Sword, X, Flame, Eye, Target, Sparkles } from 'lucide-react';
+import { X } from 'lucide-react';
 
 interface CharacterCardProps {
   character: Character | null;
@@ -9,14 +9,25 @@ interface CharacterCardProps {
   transitionProgress?: number;
 }
 
-const getRgbaColor = (hex: string, alpha: number) => {
-  const c = hex.replace('#', '');
-  const r = parseInt(c.substring(0, 2), 16) || 255;
-  const g = parseInt(c.substring(2, 4), 16) || 255;
-  const b = parseInt(c.substring(4, 6), 16) || 255;
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-};
+const Paragraphs: React.FC<{ paragraphs: string[]; className?: string }> = ({ paragraphs, className = '' }) => (
+  <div className={className}>
+    {paragraphs.map((paragraph, index) => (
+      <p key={index} className={index > 0 ? 'mt-2' : ''}>
+        {paragraph}
+      </p>
+    ))}
+  </div>
+);
 
+const SectionDivider: React.FC<{ label: string }> = ({ label }) => (
+  <div className="flex items-center gap-3 my-3 md:my-2">
+    <div className="flex-1 h-px bg-slate-200" />
+    <span className="text-[9px] md:text-[8px] font-bold tracking-[0.2em] text-slate-400 uppercase whitespace-nowrap">
+      {label}
+    </span>
+    <div className="flex-1 h-px bg-slate-200" />
+  </div>
+);
 const StatValue: React.FC<{ value: number; active: boolean; color: string }> = ({ value, active, color }) => {
   const [displayValue, setDisplayValue] = React.useState(0);
   const [pulse, setPulse] = React.useState(false);
@@ -395,7 +406,7 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({
       setAnimate(true);
     }, 120);
 
-    const keys = Object.keys(character.stats);
+    const keys = character.attributes.map((attr) => attr.name);
     const timers: NodeJS.Timeout[] = [];
 
     keys.forEach((key, index) => {
@@ -487,7 +498,7 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({
         {/* Pop-Out Card Body - Predefined and locked to fit our flight trajectory bounds without layout jumps */}
         <div 
           id="modal-card-body"
-          className={`relative rounded-3xl w-[calc(100vw-32px)] max-w-[420px] md:max-w-none md:w-[840px] h-[540px] xs:h-[590px] md:h-[580px] max-h-[calc(100vh-64px)] shadow-[0_30px_100px_rgba(0,0,0,0.35)] flex flex-col md:flex-row border-0 overflow-visible z-10 select-none ${
+          className={`relative rounded-3xl w-[calc(100vw-32px)] max-w-[420px] md:max-w-none md:w-[900px] h-[540px] xs:h-[590px] md:h-[min(700px,calc(100vh-32px))] max-h-[calc(100vh-64px)] shadow-[0_30px_100px_rgba(0,0,0,0.35)] flex flex-col md:flex-row border-0 overflow-hidden z-10 select-none ${
             (isTransitionActive || hasTransitionedRef.current) ? '' : 'animate-scale-up'
           }`}
           style={{ 
@@ -514,7 +525,7 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({
         {/* Left Side: 3D Popout Illustration Container with clean transparent background and no ambient pulse shadow or gradients */}
         <div 
           id="character-art-panel" 
-          className="character-image-wrapper relative w-full h-[250px] md:h-full md:w-[45%] bg-transparent flex items-end justify-center overflow-visible z-10 shrink-0 select-none pb-0 pt-0 cursor-pointer"
+          className="character-image-wrapper relative w-full h-[250px] md:h-full md:w-[42%] bg-transparent flex items-end justify-center overflow-visible z-10 shrink-0 select-none pb-0 pt-0 cursor-pointer"
           style={{
             opacity: contentOpacity,
             transform: contentTranslateY,
@@ -535,26 +546,21 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({
               transformOrigin: 'bottom center',
             }}
           >
-            {/* Main 3D overlapping illustration image directly with transparent background, hover dynamics, and distinct dimensional popout overflow */}
+            {/* Main illustration with transparent background and 3D tilt on hover */}
             <img 
               id="modal-character-img"
               src={character.image} 
               alt={character.name}
               className="character-image absolute bottom-0 left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0 md:-left-14 h-[250px] md:h-[135%] z-12 object-contain origin-bottom max-w-none md:max-w-none pointer-events-auto transition-all duration-300"
-              style={{
-                filter: tilt.active 
-                  ? 'drop-shadow(0 25px 35px rgba(0,0,0,0.22))' 
-                  : 'drop-shadow(0 8px 16px rgba(0,0,0,0.12))',
-              }}
               referrerPolicy="no-referrer"
             />
           </div>
         </div>
  
-        {/* Right Side: Description and Stats details */}
+        {/* Right Side: Hero sheet content */}
         <div 
           id="character-info-panel" 
-          className="w-full md:w-[55%] p-4 xs:p-6 sm:p-8 md:p-12 flex flex-col justify-start md:justify-between bg-transparent relative z-20 min-h-0 overflow-y-auto scrollbar-thin pb-6"
+          className="w-full md:w-[58%] p-4 xs:p-6 sm:p-8 md:px-9 md:py-7 flex flex-col bg-transparent relative z-20 min-h-0 overflow-y-auto scrollbar-thin pb-6"
           style={{
             opacity: contentOpacity,
             transform: contentTranslateY,
@@ -562,76 +568,97 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({
           }}
         >
           <div className="relative z-25 max-w-md mx-auto md:max-w-none w-full px-2 sm:px-4 md:px-0">
-            {/* Class Subtext */}
-            <span 
-              className="text-[10px] font-bold tracking-[0.25em] uppercase opacity-80"
-              style={{ color: character.color }}
-            >
-              {character.subtitle}
-            </span>
+            {/* Header block */}
+            <header className="shrink-0">
+              <span 
+                className="text-[10px] md:text-[9px] font-bold tracking-[0.25em] uppercase"
+                style={{ color: character.color }}
+              >
+                {character.name}
+              </span>
 
-            {/* Title display typography */}
-            <h2 id="modal-character-title" className="text-3xl sm:text-4xl font-headline font-semibold text-slate-800 tracking-tight mt-1 mb-3">
-              {character.name}
-            </h2>
+              <h2 id="modal-character-title" className="text-3xl sm:text-4xl md:text-[2rem] font-headline font-semibold text-slate-800 tracking-tight mt-1 leading-tight">
+                {character.title}
+              </h2>
 
-            {/* Accent Line */}
-            <div 
-              className="w-16 h-1 mb-5 rounded-full"
-              style={{ backgroundColor: character.color }}
-            />
+              <p 
+                className="text-sm md:text-xs font-bold tracking-wide uppercase mt-1 mb-3 md:mb-2"
+                style={{ color: character.color }}
+              >
+                {character.subtitle}
+              </p>
 
-            {/* Description Paragraph */}
-            <p id="modal-character-description" className="text-slate-600 leading-relaxed text-xs sm:text-sm mb-5">
-              {character.desc}
-            </p>
+              <div 
+                className="w-16 h-1 mb-4 md:mb-3 rounded-full"
+                style={{ backgroundColor: character.color }}
+              />
 
-            {/* Atributos Legendarios */}
-            <div id="character-stats-panel" className="mb-1">
-              <span className="text-[10px] sm:text-xs font-bold tracking-wider text-slate-400 uppercase block mb-2 sm:mb-3">Atributos Legendarios</span>
-              <div className="space-y-2 sm:space-y-3">
-                {Object.entries(character.stats).map(([key, val], index) => {
-                  const barWidth = animate ? val : 0;
-                  const isTotalVisible = !!visibleTotals[key];
+              <Paragraphs
+                paragraphs={character.description}
+                className="text-slate-600 leading-relaxed text-xs sm:text-sm md:text-[11px] md:leading-snug mb-4 md:mb-3"
+              />
+            </header>
 
-                  return (
-                    <div key={key} className="flex items-center text-xs">
-                      {/* Stat name label */}
-                      <span className="w-20 sm:w-24 text-slate-500 capitalize text-[11px] sm:text-xs font-semibold select-none">{key}</span>
-                      
-                      {/* Animated Track Container */}
-                      <div className="flex-1 h-2 bg-slate-100 rounded-full relative overflow-hidden">
-                        <div 
-                          className="h-full rounded-full absolute left-0 top-0 transition-all overflow-hidden"
-                          style={{ 
-                            width: `${barWidth}%`, 
-                            backgroundColor: character.color,
-                            boxShadow: `0 0 8px ${character.color}aa`,
-                            transitionProperty: animate ? 'width' : 'none',
-                            transitionDuration: animate ? '700ms' : '0ms',
-                            transitionTimingFunction: animate ? 'cubic-bezier(0.25, 1, 0.4, 1)' : 'unset',
-                            transitionDelay: animate ? `${index * 120}ms` : '0ms'
-                          }}
-                        >
-                          {/* Shimmer light flare passing through during charging phase */}
-                          {animate && !isTotalVisible && (
-                            <div 
-                              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-bar-shimmer"
-                              style={{ width: '150px' }}
-                            />
-                          )}
+            {/* Attributes + Extra */}
+            <div>
+              <SectionDivider label="Atributos Legendarios" />
+
+              <div className="space-y-3 md:space-y-2.5">
+                  {character.attributes.map((attr, index) => {
+                    const barWidth = animate ? attr.value : 0;
+                    const isTotalVisible = !!visibleTotals[attr.name];
+
+                    return (
+                      <div key={attr.name} className="text-xs md:text-[10px]">
+                        <div className="flex items-baseline justify-between gap-3 mb-1">
+                          <span className="text-slate-800 font-bold uppercase tracking-wide text-[11px] md:text-[10px]">
+                            {attr.name}
+                          </span>
+                          <StatValue value={attr.value} active={isTotalVisible} color={character.color} />
+                        </div>
+
+                        <Paragraphs
+                          paragraphs={attr.description}
+                          className="text-slate-500 leading-snug text-[11px] md:text-[9px] md:leading-tight mb-1.5 md:mb-1"
+                        />
+
+                        <div className="h-1.5 md:h-1 bg-slate-100 rounded-full relative overflow-hidden">
+                          <div 
+                            className="h-full rounded-full absolute left-0 top-0 transition-all overflow-hidden"
+                            style={{ 
+                              width: `${barWidth}%`, 
+                              backgroundColor: character.color,
+                              boxShadow: `0 0 6px ${character.color}88`,
+                              transitionProperty: animate ? 'width' : 'none',
+                              transitionDuration: animate ? '700ms' : '0ms',
+                              transitionTimingFunction: animate ? 'cubic-bezier(0.25, 1, 0.4, 1)' : 'unset',
+                              transitionDelay: animate ? `${index * 120}ms` : '0ms'
+                            }}
+                          >
+                            {animate && !isTotalVisible && (
+                              <div 
+                                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-bar-shimmer"
+                                style={{ width: '150px' }}
+                              />
+                            )}
+                          </div>
                         </div>
                       </div>
+                    );
+                  })}
+                </div>
 
-                      {/* Precise and high-fidelity Countup Numeric Total on completion */}
-                      <StatValue value={val} active={isTotalVisible} color={character.color} />
-                    </div>
-                  );
-                })}
-              </div>
+              {character.extra && character.extra.length > 0 && (
+                <footer className="mt-4 md:mt-3 pt-1">
+                  <SectionDivider label="Extra" />
+                  <Paragraphs
+                    paragraphs={character.extra}
+                    className="text-slate-500 leading-relaxed text-xs md:text-[10px] md:leading-snug italic"
+                  />
+                </footer>
+              )}
             </div>
           </div>
-
         </div>
       </div>
     </div>
