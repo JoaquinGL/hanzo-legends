@@ -68,7 +68,8 @@ export const SoundBar: React.FC<SoundBarProps> = ({
   
   // Calculate heights according to current state
   let targetHeight = baseHeight;
-  if (isSelected) {
+  const showSelectedBoost = isSelected && !isTotallyHidden;
+  if (showSelectedBoost) {
     targetHeight = baseHeight + 5.5; 
   } else if (isHovered && isInteractive) {
     targetHeight = baseHeight + 3.0; 
@@ -77,7 +78,7 @@ export const SoundBar: React.FC<SoundBarProps> = ({
   return (
     <div
       id={`bar-group-${character.id}`}
-      className={`relative flex flex-col items-center w-[40px] sm:w-[54px] transition-all duration-500 ${
+      className={`relative flex flex-col items-center w-[52px] sm:w-[68px] origin-bottom transition-all duration-500 ${
         !isInteractive ? 'pointer-events-none cursor-default' : isDimmed ? 'opacity-30 scale-[0.88] pointer-events-none' : 'cursor-pointer'
       }`}
       onMouseEnter={() => isInteractive && !isDimmed && setIsHovered(true)}
@@ -85,28 +86,28 @@ export const SoundBar: React.FC<SoundBarProps> = ({
       onClick={isInteractive ? onClick : undefined}
       style={{
         visibility: isTotallyHidden ? 'hidden' : 'visible',
-        transition: isTotallyHidden ? 'none' : undefined,
+        opacity: isTotallyHidden ? 0 : 1,
+        transition: isTotallyHidden
+          ? 'opacity 260ms ease-out, visibility 0s linear 260ms'
+          : 'opacity 260ms ease-out',
       }}
     >
       {/* Restored informative floating tooltip bubble on hover/selection */}
       <span
         id={`label-${character.id}`}
-        className="absolute -top-16 font-sans font-semibold tracking-wider text-[11px] transition-all duration-300 rounded-xl px-2.5 py-1.5 shadow-md whitespace-nowrap z-25 pointer-events-none border border-slate-100 bg-white text-slate-700"
+        className="absolute -top-11 font-sans font-semibold tracking-wider text-[10px] transition-all duration-300 rounded-lg px-2 py-1 shadow-md z-25 pointer-events-none border border-slate-100 bg-white text-slate-700 text-center whitespace-nowrap"
         style={{
-          transform: isInteractive && (isHovered || isSelected) && !isDimmed ? 'translateY(0) scale(1)' : 'translateY(12px) scale(0.95)',
+          transform: isInteractive && (isHovered || isSelected) && !isDimmed ? 'translateY(0) scale(1)' : 'translateY(8px) scale(0.95)',
           opacity: isInteractive && (isHovered || isSelected) && !isDimmed ? 1 : 0,
         }}
       >
         {character.name}
-        <span className="block text-[8px] text-center opacity-70 font-mono mt-0.5 leading-none uppercase">
-          {character.subtitle}
-        </span>
       </span>
 
       {/* Main Color Bar - Sitting completely flat with rounded-t-full top */}
       <div
         id={`bar-main-${character.id}`}
-        className={`w-7 sm:w-9 rounded-t-full relative flex flex-col justify-end pb-3 items-center overflow-hidden border-t border-white/40 select-none
+        className={`w-9 sm:w-11 rounded-t-full relative flex flex-col justify-end pb-3 items-center overflow-hidden border-t border-white/40 select-none
           ${!isIntroComplete ? 'animate-strip-intro' : 'transition-all duration-500 ease-[cubic-bezier(0.25,1,0.5,1)]'}
           ${isTotallyHidden ? 'opacity-0 pointer-events-none' : isSelected 
             ? 'opacity-100 ring-4 ring-white shadow-[0_-12px_30px_rgba(255,255,255,0.45)] brightness-105 z-20' 
@@ -121,7 +122,9 @@ export const SoundBar: React.FC<SoundBarProps> = ({
           transformOrigin: 'bottom center',
           animationDelay: !isIntroComplete ? `${500 + index * 100}ms` : undefined,
           opacity: isTotallyHidden ? 0 : undefined,
-          transition: isTotallyHidden ? 'none' : undefined,
+          transition: isTotallyHidden
+            ? 'opacity 260ms ease-out, height 500ms ease-[cubic-bezier(0.25,1,0.5,1)]'
+            : undefined,
           boxShadow: isTotallyHidden 
             ? 'none'
             : isHovered && isInteractive && !isDimmed

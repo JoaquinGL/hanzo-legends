@@ -15,16 +15,18 @@ export const FinalPathJourney: React.FC<FinalPathJourneyProps> = ({
   const requestRef = useRef<number>(0);
   const startTimeRef = useRef<number | null>(null);
 
-  const [startCoords, setStartCoords] = useState<{
-    x: number;
-    y: number;
-    yTop: number;
-    width: number;
-  }[]>([]);
+  const [startCoords, setStartCoords] = useState<
+    {
+      x: number;
+      y: number;
+      yTop: number;
+      width: number;
+    }[]
+  >([]);
 
   const N = characters.length;
   // Total experience duration is 7.5 seconds for a cinematic, breathing pace
-  const TOTAL_DURATION = 7500; 
+  const TOTAL_DURATION = 7500;
 
   // Capture precise positions of the active SoundBar nodes
   useEffect(() => {
@@ -116,10 +118,15 @@ export const FinalPathJourney: React.FC<FinalPathJourneyProps> = ({
   // Define the target Y in viewport coordinates dynamically as the camera rises.
   // - When cameraProgress is 0, the target is located high above screen (-H * 0.7), so the paths shoot upward first.
   // - As cameraProgress approaches 1.0, the target moves down to logoBottomY, revealing the convergence point elegantly.
-  const currentTargetY = -H * 0.7 + (logoBottomY - (-H * 0.7)) * cameraProgress;
+  const currentTargetY = -H * 0.7 + (logoBottomY - -H * 0.7) * cameraProgress;
 
   // Purely deterministic parametric curve calculations (completely static shape once drawn!)
-  const getPointAtU = (u: number, i: number, coord: { x: number; y: number; yTop: number }, targetYVal: number) => {
+  const getPointAtU = (
+    u: number,
+    i: number,
+    coord: { x: number; y: number; yTop: number },
+    targetYVal: number,
+  ) => {
     const startX = coord.x;
     const startYTop = coord.yTop;
     const targetX = W / 2;
@@ -134,15 +141,15 @@ export const FinalPathJourney: React.FC<FinalPathJourneyProps> = ({
     const envelope = Math.sin(u * Math.PI);
 
     // Common central axis orbital rotation around W / 2 (convergencia orbital)
-    const orbitalAngle = i * (Math.PI * 2 / N) + (u * Math.PI * 1.55);
+    const orbitalAngle = i * ((Math.PI * 2) / N) + u * Math.PI * 1.55;
 
     // Orbit radius swells outward slightly and closes to 0 at ends
     const maxRadius = W * 0.11;
     const orbitalRadius = maxRadius * envelope;
 
     // Pre-calculated scenic random curves (fully static, zero time variables!)
-    const freq1 = 2.0 * Math.PI + (i * 0.35);
-    const freq2 = 4.0 * Math.PI - (i * 0.22);
+    const freq1 = 2.0 * Math.PI + i * 0.35;
+    const freq2 = 4.0 * Math.PI - i * 0.22;
     const wave1 = Math.sin(u * freq1) * (W * 0.038);
     const wave2 = Math.cos(u * freq2) * (W * 0.012);
     const organicDeviation = (wave1 + wave2) * envelope;
@@ -165,7 +172,7 @@ export const FinalPathJourney: React.FC<FinalPathJourneyProps> = ({
     // - Staggered takeoff delay is very tight (30ms per ribbon)
     const delay = i * 0.03;
     const activeSec = Math.max(0, elapsedSec - delay);
-    
+
     // Smooth dual-phase ribbon growth matching the camera interpolation completely!
     let maxU = 0;
     if (elapsedSec < 4.2) {
@@ -218,9 +225,12 @@ export const FinalPathJourney: React.FC<FinalPathJourneyProps> = ({
   let logoOpacity = 0;
 
   if (showLogo) {
-    const pLogo = Math.min(1, (elapsedSec - logoStartSec) / (logoEndSec - logoStartSec));
+    const pLogo = Math.min(
+      1,
+      (elapsedSec - logoStartSec) / (logoEndSec - logoStartSec),
+    );
     const easeLogo = 1 - Math.pow(1 - pLogo, 4); // Quartic ease-out descent
-    logoYOffset = -550 * (1 - easeLogo); 
+    logoYOffset = -550 * (1 - easeLogo);
     logoOpacity = 1.0;
   }
 
@@ -228,38 +238,42 @@ export const FinalPathJourney: React.FC<FinalPathJourneyProps> = ({
   const isFinished = elapsedSec >= 5.6;
 
   return (
-    <div 
-      id="final-path-journey-root"
-      className="fixed inset-0 w-full h-full z-[100] bg-transparent flex flex-col justify-center items-center overflow-hidden pointer-events-none select-none"
+    <div
+      id='final-path-journey-root'
+      className='fixed inset-0 w-full h-full z-[100] bg-transparent flex flex-col justify-center items-center overflow-hidden pointer-events-none select-none'
     >
       {/* High fidelity static trace lines overlay */}
-      <div className="absolute inset-0 w-full h-full pointer-events-none z-0">
-        <svg className="absolute inset-0 w-full h-full block overflow-visible pointer-events-none">
+      <div className='absolute inset-0 w-full h-full pointer-events-none z-0'>
+        <svg className='absolute inset-0 w-full h-full block overflow-visible pointer-events-none'>
           {renderedPaths.map((path, idx) => {
             if (!path.d) return null;
 
             return (
-              <g key={`final-strip-path-${idx}`} style={{ opacity: path.opacity }} className="transition-opacity duration-300">
+              <g
+                key={`final-strip-path-${idx}`}
+                style={{ opacity: path.opacity }}
+                className='transition-opacity duration-300'
+              >
                 {/* Visual glow backdrop aura */}
                 <path
                   d={path.d}
-                  fill="none"
+                  fill='none'
                   stroke={path.color}
                   strokeWidth={path.width * 1.25}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="opacity-20 blur-[5px]"
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  className='opacity-20 blur-[5px]'
                 />
 
                 {/* Main continuous high resolution ribbon matching the bar shapes */}
                 <path
                   d={path.d}
-                  fill="none"
+                  fill='none'
                   stroke={path.color}
                   strokeWidth={path.width}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="opacity-95"
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  className='opacity-95'
                 />
               </g>
             );
@@ -269,87 +283,94 @@ export const FinalPathJourney: React.FC<FinalPathJourneyProps> = ({
 
       {/* Centered logo destination dropping elegantly from outside the viewport on top of the paths */}
       {showLogo && (
-        <div 
-          className="absolute flex flex-col items-center justify-center text-center pointer-events-none bg-white border border-slate-200/80 shadow-[0_24px_50px_rgba(0,0,0,0.22),0_8px_20px_rgba(0,0,0,0.08)] rounded-2xl p-7 sm:p-10 w-[calc(100vw-32px)] max-w-[420px] z-10"
+        <div
+          className='absolute flex flex-col items-center justify-center text-center pointer-events-none bg-white border border-slate-200/80 shadow-[0_24px_50px_rgba(0,0,0,0.22),0_8px_20px_rgba(0,0,0,0.08)] rounded-2xl p-7 sm:p-10 w-[calc(100vw-32px)] max-w-[420px] z-10'
           style={{
             top: `${destScreenY}px`,
             left: '50%',
             transform: `translate(-50%, ${logoYOffset.toFixed(1)}px)`,
             opacity: logoOpacity,
-            fontFamily: '"Space Grotesk", sans-serif'
+            fontFamily: '"Space Grotesk", sans-serif',
           }}
         >
           {/* Subtle emblem ambient glow backplate */}
-          <div className="absolute -inset-10 rounded-full bg-slate-200/5 blur-3xl pointer-events-none" />
+          <div className='absolute -inset-10 rounded-full bg-slate-200/5 blur-3xl pointer-events-none' />
 
-          <div 
-            className="mb-4 flex items-center justify-center w-14 h-14 rounded-full bg-slate-50 border border-slate-200 shadow-[0_4px_12px_rgba(0,0,0,0.05)] shrink-0 animate-[logoRevealScaleIn_800ms_cubic-bezier(0.16,1,0.3,1)_forwards]"
-          >
-            <Bookmark className="w-6 h-6 text-slate-800 animate-[pulse_2.2s_infinite]" />
+          <div className='mb-4 flex items-center justify-center w-14 h-14 rounded-full bg-slate-50 border border-slate-200 shadow-[0_4px_12px_rgba(0,0,0,0.05)] shrink-0 animate-[logoRevealScaleIn_800ms_cubic-bezier(0.16,1,0.3,1)_forwards]'>
+            <Bookmark className='w-6 h-6 text-slate-800 animate-[pulse_2.2s_infinite]' />
           </div>
 
-          <h2 
-            className="text-2xl md:text-3xl font-bold text-slate-950 tracking-tight leading-none mb-2 text-center whitespace-nowrap"
+          <h2
+            className='text-2xl md:text-3xl font-bold text-slate-950 tracking-tight leading-none mb-2 text-center whitespace-nowrap'
             style={{
               fontFamily: '"Space Grotesk", sans-serif',
-              animation: 'logoRevealSlideUp 800ms cubic-bezier(0.16, 1, 0.3, 1) 400ms forwards',
+              animation:
+                'logoRevealSlideUp 800ms cubic-bezier(0.16, 1, 0.3, 1) 400ms forwards',
               opacity: 0,
             }}
           >
-            Gatones y Mazmorras.
+            Hanzo Legends.
           </h2>
 
-          <p 
-            className="text-slate-500 font-medium tracking-widest uppercase text-[9px] sm:text-[10px] whitespace-nowrap mb-2"
+          <p
+            className='text-slate-500 font-medium tracking-widest uppercase text-[9px] sm:text-[10px] whitespace-nowrap mb-2'
             style={{
               fontFamily: '"JetBrains Mono", monospace',
-              animation: 'logoRevealSlideUp 800ms cubic-bezier(0.16, 1, 0.3, 1) 600ms forwards',
+              animation:
+                'logoRevealSlideUp 800ms cubic-bezier(0.16, 1, 0.3, 1) 600ms forwards',
               opacity: 0,
             }}
           >
             — capítulo final : la unión de caminos —
           </p>
 
-          <div 
-            className="w-12 h-[1px] bg-slate-200/80 my-2 self-center"
+          <div
+            className='w-12 h-[1px] bg-slate-200/80 my-2 self-center'
             style={{
-              animation: 'logoRevealSlideUp 800ms cubic-bezier(0.16, 1, 0.3, 1) 700ms forwards',
+              animation:
+                'logoRevealSlideUp 800ms cubic-bezier(0.16, 1, 0.3, 1) 700ms forwards',
               opacity: 0,
             }}
           />
 
-          <span 
-            className="text-[10px] sm:text-[11px] text-slate-600 font-sans tracking-wide max-w-sm block leading-relaxed"
+          <span
+            className='text-[10px] sm:text-[11px] text-slate-600 font-sans tracking-wide max-w-sm block leading-relaxed'
             style={{
               fontFamily: '"Inter", sans-serif',
-              animation: 'logoRevealSlideUp 800ms cubic-bezier(0.16, 1, 0.3, 1) 950ms forwards',
+              animation:
+                'logoRevealSlideUp 800ms cubic-bezier(0.16, 1, 0.3, 1) 950ms forwards',
               opacity: 0,
             }}
           >
-            Has recorrido todos los senderos de la leyenda. La hermandad ha unificado sus vibraciones para dar paso al nuevo amanecer.
+            Has recorrido todos los senderos de la leyenda. La hermandad ha
+            unificado sus vibraciones para dar paso al nuevo amanecer.
           </span>
         </div>
       )}
 
       {/* Repeat experience button container on top of everything */}
-      <div 
-        className="absolute bottom-16 z-[120] flex flex-col items-center justify-center transition-all duration-700 pointer-events-auto"
+      <div
+        className='absolute bottom-16 z-[120] flex flex-col items-center justify-center transition-all duration-700 pointer-events-auto'
         style={{
           opacity: isFinished ? 1 : 0,
-          transform: isFinished ? 'translateY(0) scale(1)' : 'translateY(20px) scale(0.95)',
+          transform: isFinished
+            ? 'translateY(0) scale(1)'
+            : 'translateY(20px) scale(0.95)',
           pointerEvents: isFinished ? 'auto' : 'none',
         }}
       >
         <button
           onClick={onReset}
-          className="flex items-center gap-2 px-6 py-2.5 rounded-full border border-slate-300 bg-white/95 text-slate-700 hover:text-slate-900 shadow-[0_4px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_12px_24px_rgba(0,0,0,0.12)] hover:border-slate-400 hover:scale-105 active:scale-95 cursor-pointer transition-all duration-300 font-sans text-xs font-semibold uppercase tracking-wider"
+          className='flex items-center gap-2 px-6 py-2.5 rounded-full border border-slate-300 bg-white/95 text-slate-700 hover:text-slate-900 shadow-[0_4px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_12px_24px_rgba(0,0,0,0.12)] hover:border-slate-400 hover:scale-105 active:scale-95 cursor-pointer transition-all duration-300 font-sans text-xs font-semibold uppercase tracking-wider'
         >
-          <RefreshCw className="w-3 h-3 animate-spin-reverse" />
+          <RefreshCw className='w-3 h-3 animate-spin-reverse' />
           Repetir experiencia
         </button>
       </div>
 
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
         @keyframes logoRevealScaleIn {
           0% {
             transform: scale(0.75);
@@ -370,7 +391,9 @@ export const FinalPathJourney: React.FC<FinalPathJourneyProps> = ({
             opacity: 1;
           }
         }
-      `}} />
+      `,
+        }}
+      />
     </div>
   );
 };

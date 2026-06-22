@@ -1,27 +1,29 @@
+export interface LegendaryAttribute {
+  name: string;
+  value: number;
+  description: string[];
+}
+
 export interface Character {
   id: string;
   name: string;
+  title: string;
   subtitle: string;
-  desc: string;
+  description: string[];
+  extra?: string[];
   color: string;
   borderColor: string;
   img: string;
   image: string;
   category: string;
-  stats: {
-    fuerza: number;
-    agilidad: number;
-    inteligencia: number;
-    carisma: number;
-    ritmo: number;
-  };
+  attributes: LegendaryAttribute[];
   instrumentName: string;
-  notes: number[]; // Midi numbers or frequencies
+  notes: number[];
 }
 
 export interface PlaybackState {
   isPlaying: boolean;
   bpm: number;
   currentStep: number;
-  activeTracks: Record<string, boolean>; // Mute state
+  activeTracks: Record<string, boolean>;
 }
