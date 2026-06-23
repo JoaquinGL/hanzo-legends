@@ -169,7 +169,7 @@ export default function App() {
               id='brand-subtitle'
               className='text-xl md:text-2xl text-slate-400 font-light tracking-wide text-center animate-subtitle-intro'
             >
-              conoce cada departamento épico de Hanzo.
+              conoce la historia épica de cada departamento.
             </span>
 
             {/* Unlocked special final button: Clean, magical, suggestion-oriented */}
