@@ -93,9 +93,10 @@ export const FinalPathJourney: React.FC<FinalPathJourneyProps> = ({
   const W = window.innerWidth;
   const H = window.innerHeight;
 
-  // Center target location for the closing destination/logo
-  const destScreenY = H * 0.35;
-  const logoBottomY = destScreenY + 115;
+  // Vertically centered closing card — paths converge near its upper edge
+  const FINAL_CARD_HEIGHT_EST = 460;
+  const cardTopY = H * 0.5 - FINAL_CARD_HEIGHT_EST / 2;
+  const logoBottomY = cardTopY + 95;
 
   // HIGH PRECISION VIEWPORT CO-ORIENTATION & CAMERA ASCENT TIMER:
   // - Starts climbing at t = 0.2s and reaches 88% of centering at t = 4.2s (momentum stage where ribbons almost reach top).
@@ -284,11 +285,11 @@ export const FinalPathJourney: React.FC<FinalPathJourneyProps> = ({
       {/* Centered logo destination dropping elegantly from outside the viewport on top of the paths */}
       {showLogo && (
         <div
-          className='absolute flex flex-col items-center justify-center text-center pointer-events-none bg-white border border-slate-200/80 shadow-[0_24px_50px_rgba(0,0,0,0.22),0_8px_20px_rgba(0,0,0,0.08)] rounded-2xl p-7 sm:p-10 w-[calc(100vw-32px)] max-w-[420px] z-10'
+          className='absolute flex flex-col items-center text-center bg-white border border-slate-200/80 shadow-[0_24px_50px_rgba(0,0,0,0.22),0_8px_20px_rgba(0,0,0,0.08)] rounded-2xl px-8 pt-12 pb-6 sm:px-10 sm:pt-14 sm:pb-7 w-[calc(100vw-48px)] max-w-[280px] sm:max-w-[300px] z-10'
           style={{
-            top: `${destScreenY}px`,
+            top: '50%',
             left: '50%',
-            transform: `translate(-50%, ${logoYOffset.toFixed(1)}px)`,
+            transform: `translate(-50%, calc(-50% + ${logoYOffset.toFixed(1)}px))`,
             opacity: logoOpacity,
             fontFamily: '"Space Grotesk", sans-serif',
           }}
@@ -296,14 +297,14 @@ export const FinalPathJourney: React.FC<FinalPathJourneyProps> = ({
           {/* Subtle emblem ambient glow backplate */}
           <div className='absolute -inset-10 rounded-full bg-slate-200/5 blur-3xl pointer-events-none' />
 
-          <div className='mb-4 flex items-center justify-center shrink-0 animate-[logoRevealScaleIn_800ms_cubic-bezier(0.16,1,0.3,1)_forwards] text-slate-950'>
+          <div className='mb-8 sm:mb-10 py-3 flex items-center justify-center shrink-0 animate-[logoRevealScaleIn_800ms_cubic-bezier(0.16,1,0.3,1)_forwards] text-slate-950'>
             <svg
               width='72'
               height='12'
               viewBox='0 0 72 12'
               fill='none'
               xmlns='http://www.w3.org/2000/svg'
-              className='h-3 w-auto sm:hidden'
+              className='h-3.5 w-auto sm:hidden'
               aria-hidden
             >
               <path d='M2 0V12' stroke='currentColor' strokeWidth='4' />
@@ -317,7 +318,7 @@ export const FinalPathJourney: React.FC<FinalPathJourneyProps> = ({
               height='15'
               viewBox='0 0 67 15'
               fill='none'
-              className='hidden h-3.5 w-auto sm:block md:hidden'
+              className='hidden h-4 w-auto sm:block md:hidden'
             >
               <title id='hanzoLogoSmall'>Hanzo logo</title>
               <path d='M3 7.5H65' stroke='currentColor' strokeWidth='5' />
@@ -355,7 +356,7 @@ export const FinalPathJourney: React.FC<FinalPathJourneyProps> = ({
           </div>
 
           <h2
-            className='text-2xl md:text-3xl font-bold text-slate-950 tracking-tight leading-none mb-2 text-center whitespace-nowrap'
+            className='text-xl sm:text-2xl font-bold text-slate-950 tracking-tight leading-tight mb-4 text-center'
             style={{
               fontFamily: '"Space Grotesk", sans-serif',
               animation:
@@ -367,7 +368,7 @@ export const FinalPathJourney: React.FC<FinalPathJourneyProps> = ({
           </h2>
 
           <p
-            className='text-slate-500 font-medium tracking-widest uppercase text-[9px] sm:text-[10px] whitespace-nowrap mb-2'
+            className='text-slate-500 font-medium tracking-widest uppercase text-[8px] sm:text-[9px] leading-relaxed mb-6 px-1'
             style={{
               fontFamily: '"JetBrains Mono", monospace',
               animation:
@@ -379,7 +380,7 @@ export const FinalPathJourney: React.FC<FinalPathJourneyProps> = ({
           </p>
 
           <div
-            className='w-12 h-[1px] bg-slate-200/80 my-2 self-center'
+            className='w-10 h-px bg-slate-200/80 my-2 self-center'
             style={{
               animation:
                 'logoRevealSlideUp 800ms cubic-bezier(0.16, 1, 0.3, 1) 700ms forwards',
@@ -388,7 +389,7 @@ export const FinalPathJourney: React.FC<FinalPathJourneyProps> = ({
           />
 
           <span
-            className='text-[10px] sm:text-[11px] text-slate-600 font-sans tracking-wide max-w-sm block leading-relaxed'
+            className='text-[10px] sm:text-[11px] text-slate-600 font-sans tracking-wide max-w-[220px] block leading-relaxed mt-4'
             style={{
               fontFamily: '"Inter", sans-serif',
               animation:
@@ -399,28 +400,27 @@ export const FinalPathJourney: React.FC<FinalPathJourneyProps> = ({
             Has recorrido todos los senderos de la leyenda. La hermandad ha
             unificado sus vibraciones para dar paso al nuevo amanecer.
           </span>
+
+          <div
+            className='mt-8 pt-5 w-full border-t border-slate-100 flex flex-col items-center transition-all duration-700'
+            style={{
+              opacity: isFinished ? 1 : 0,
+              transform: isFinished
+                ? 'translateY(0) scale(1)'
+                : 'translateY(10px) scale(0.98)',
+              pointerEvents: isFinished ? 'auto' : 'none',
+            }}
+          >
+            <button
+              onClick={onReset}
+              className='flex items-center gap-2 px-6 py-2.5 rounded-full border border-slate-300 bg-white text-slate-700 hover:text-slate-900 shadow-[0_4px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_12px_24px_rgba(0,0,0,0.12)] hover:border-slate-400 hover:scale-105 active:scale-95 cursor-pointer transition-all duration-300 font-sans text-xs font-semibold uppercase tracking-wider'
+            >
+              <RefreshCw className='w-3 h-3 animate-spin-reverse' />
+              Repetir experiencia
+            </button>
+          </div>
         </div>
       )}
-
-      {/* Repeat experience button container on top of everything */}
-      <div
-        className='absolute bottom-16 z-[120] flex flex-col items-center justify-center transition-all duration-700 pointer-events-auto'
-        style={{
-          opacity: isFinished ? 1 : 0,
-          transform: isFinished
-            ? 'translateY(0) scale(1)'
-            : 'translateY(20px) scale(0.95)',
-          pointerEvents: isFinished ? 'auto' : 'none',
-        }}
-      >
-        <button
-          onClick={onReset}
-          className='flex items-center gap-2 px-6 py-2.5 rounded-full border border-slate-300 bg-white/95 text-slate-700 hover:text-slate-900 shadow-[0_4px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_12px_24px_rgba(0,0,0,0.12)] hover:border-slate-400 hover:scale-105 active:scale-95 cursor-pointer transition-all duration-300 font-sans text-xs font-semibold uppercase tracking-wider'
-        >
-          <RefreshCw className='w-3 h-3 animate-spin-reverse' />
-          Repetir experiencia
-        </button>
-      </div>
 
       <style
         dangerouslySetInnerHTML={{
