@@ -40,32 +40,6 @@ export default function App() {
   const allVisited =
     characters.length > 0 && characters.every((char) => visitedChars[char.id]);
 
-  const playConvergenceChord = () => {
-    try {
-      const AudioCtxClass =
-        window.AudioContext || (window as any).webkitAudioContext;
-      if (!AudioCtxClass) return;
-      const ctx = new AudioCtxClass();
-      characters.forEach((char, index) => {
-        const freq = char.notes?.[0] || 220;
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(freq, ctx.currentTime);
-        const startTime = ctx.currentTime + index * 0.12;
-        gain.gain.setValueAtTime(0, ctx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.08, startTime + 0.08);
-        gain.gain.exponentialRampToValueAtTime(0.0001, startTime + 2.5);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start(startTime);
-        osc.stop(startTime + 3.0);
-      });
-    } catch (e) {
-      console.warn('AudioContext failed:', e);
-    }
-  };
-
   const handleResetExperience = () => {
     setSelectedChar(null);
     setVisitedChars({});
@@ -121,20 +95,6 @@ export default function App() {
       id='app-root-frame'
       className='relative min-h-screen w-full flex flex-col justify-between overflow-hidden antialiased select-none bg-slate-950'
     >
-      {/* 🧪 TESTING ENDING BUTTON FOR QA (DISCRETE TOP-RIGHT) 🧪 */}
-      {!isFinalAnimationActive && (
-        <button
-          id='qa-test-ending'
-          onClick={() => {
-            playConvergenceChord();
-            setIsFinalAnimationActive(true);
-          }}
-          className='fixed top-6 right-6 z-[99999] flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold shadow-[0_4px_20px_rgba(245,158,11,0.4)] transition-all duration-300 transform hover:scale-105 active:scale-95 cursor-pointer text-xs tracking-wider uppercase pointer-events-auto'
-        >
-          <Sparkles className='w-3.5 h-3.5' />
-          Testing Ending
-        </button>
-      )}
       {/* 1. Underlying Soft Glow Background - Stays static so stars/dust don't fly off */}
       <DungeonBackground
         selectedCharColor={selectedChar?.color}
@@ -222,10 +182,7 @@ export default function App() {
                 }}
               >
                 <button
-                  onClick={() => {
-                    playConvergenceChord();
-                    setIsFinalAnimationActive(true);
-                  }}
+                  onClick={() => setIsFinalAnimationActive(true)}
                   className='group relative flex items-center gap-2.5 px-6 py-3.5 rounded-full border border-slate-300 bg-white/90 text-slate-700 hover:text-slate-900 shadow-[0_4px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_12px_24px_rgba(129,140,248,0.18)] hover:border-indigo-400 hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer text-sm font-medium uppercase tracking-wider'
                 >
                   {/* Subtle pulsing background ring */}
