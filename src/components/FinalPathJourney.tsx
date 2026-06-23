@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Character } from '../types';
-import { Bookmark, RefreshCw } from 'lucide-react';
+import { RefreshCw } from 'lucide-react';
 
 interface FinalPathJourneyProps {
   characters: Character[];
@@ -296,8 +296,62 @@ export const FinalPathJourney: React.FC<FinalPathJourneyProps> = ({
           {/* Subtle emblem ambient glow backplate */}
           <div className='absolute -inset-10 rounded-full bg-slate-200/5 blur-3xl pointer-events-none' />
 
-          <div className='mb-4 flex items-center justify-center w-14 h-14 rounded-full bg-slate-50 border border-slate-200 shadow-[0_4px_12px_rgba(0,0,0,0.05)] shrink-0 animate-[logoRevealScaleIn_800ms_cubic-bezier(0.16,1,0.3,1)_forwards]'>
-            <Bookmark className='w-6 h-6 text-slate-800 animate-[pulse_2.2s_infinite]' />
+          <div className='mb-4 flex items-center justify-center shrink-0 animate-[logoRevealScaleIn_800ms_cubic-bezier(0.16,1,0.3,1)_forwards] text-slate-950'>
+            <svg
+              width='72'
+              height='12'
+              viewBox='0 0 72 12'
+              fill='none'
+              xmlns='http://www.w3.org/2000/svg'
+              className='h-3 w-auto sm:hidden'
+              aria-hidden
+            >
+              <path d='M2 0V12' stroke='currentColor' strokeWidth='4' />
+              <path d='M70 0V12' stroke='currentColor' strokeWidth='4' />
+              <path d='M70 6H2' stroke='currentColor' strokeWidth='4' />
+            </svg>
+            <svg
+              aria-labelledby='hanzoLogoSmall'
+              xmlns='http://www.w3.org/2000/svg'
+              width='67'
+              height='15'
+              viewBox='0 0 67 15'
+              fill='none'
+              className='hidden h-3.5 w-auto sm:block md:hidden'
+            >
+              <title id='hanzoLogoSmall'>Hanzo logo</title>
+              <path d='M3 7.5H65' stroke='currentColor' strokeWidth='5' />
+              <path d='M64.5 15V0' stroke='currentColor' strokeWidth='5' />
+              <path d='M2.5 15V0' stroke='currentColor' strokeWidth='5' />
+            </svg>
+            <svg
+              aria-labelledby='hanzoLogoMedium'
+              xmlns='http://www.w3.org/2000/svg'
+              width='96'
+              height='17'
+              viewBox='0 0 96 17'
+              fill='none'
+              className='hidden h-4 w-auto md:block lg:hidden'
+            >
+              <title id='hanzoLogoMedium'>Hanzo logo</title>
+              <path d='M2 8.5H92.7042' stroke='currentColor' strokeWidth='5' />
+              <path d='M93.3521 17V0' stroke='currentColor' strokeWidth='5' />
+              <path d='M2.64789 17V0' stroke='currentColor' strokeWidth='5' />
+            </svg>
+            <svg
+              aria-labelledby='hanzoLogoLarge'
+              xmlns='http://www.w3.org/2000/svg'
+              width='114'
+              height='20'
+              viewBox='0 0 114 20'
+              fill='none'
+              className='hidden h-5 w-auto lg:block'
+            >
+              <title id='hanzoLogoLarge'>Hanzo logo</title>
+              <path d='M6 10H108' stroke='currentColor' strokeWidth='6' />
+              <path d='M111 20V0' stroke='currentColor' strokeWidth='6' />
+              <path d='M3 20V0' stroke='currentColor' strokeWidth='6' />
+            </svg>
           </div>
 
           <h2
