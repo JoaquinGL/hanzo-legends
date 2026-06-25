@@ -1,12 +1,17 @@
 import React from 'react';
 import { Character } from '../types';
-import { X } from 'lucide-react';
+import { RefreshCw, X } from 'lucide-react';
 
 interface CharacterCardProps {
   character: Character | null;
   onClose: () => void;
   isTransitioning?: boolean;
   transitionProgress?: number;
+  variant?: 'default' | 'finale';
+  footerAction?: {
+    label: string;
+    onClick: () => void;
+  };
 }
 
 const Paragraphs: React.FC<{ paragraphs: string[]; className?: string }> = ({ paragraphs, className = '' }) => (
@@ -22,7 +27,7 @@ const Paragraphs: React.FC<{ paragraphs: string[]; className?: string }> = ({ pa
 const SectionDivider: React.FC<{ label: string }> = ({ label }) => (
   <div className="flex items-center gap-3 my-3 md:my-2">
     <div className="flex-1 h-px bg-slate-200" />
-    <span className="text-[9px] md:text-[8px] font-bold tracking-[0.2em] text-slate-400 uppercase whitespace-nowrap">
+    <span className="text-base md:text-xs font-bold tracking-[0.15em] md:tracking-[0.2em] text-slate-400 uppercase whitespace-nowrap">
       {label}
     </span>
     <div className="flex-1 h-px bg-slate-200" />
@@ -80,7 +85,7 @@ const StatValue: React.FC<{ value: number; active: boolean; color: string }> = (
   }, [value, active]);
 
   return (
-    <div className="relative flex items-center justify-end w-8 ml-2 h-5">
+    <div className="relative flex items-center justify-end min-w-[2rem] ml-2 h-6 md:h-5">
       {glowEffect && (
         <span 
           className="absolute w-6 h-6 rounded-full border opacity-0 animate-stat-ping pointer-events-none"
@@ -91,7 +96,7 @@ const StatValue: React.FC<{ value: number; active: boolean; color: string }> = (
         />
       )}
       <span 
-        className={`font-mono font-bold text-[11px] sm:text-xs transition-all duration-300 block text-right select-none ${
+        className={`font-mono font-bold text-base md:text-xs transition-all duration-300 block text-right select-none ${
           active 
             ? 'opacity-100' 
             : 'opacity-30'
@@ -351,8 +356,12 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({
   onClose,
   isTransitioning,
   transitionProgress,
+  variant = 'default',
+  footerAction,
 }) => {
   if (!character) return null;
+
+  const isFinale = variant === 'finale' || character.id === 'final';
 
   // Track if we animated via custom transition to bypass the keyframes entry reset (animate-scale-up) at completion
   const hasTransitionedRef = React.useRef(false);
@@ -406,7 +415,7 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({
       setAnimate(true);
     }, 120);
 
-    const keys = character.attributes.map((attr) => attr.name);
+    const keys = isFinale ? [] : character.attributes.map((attr) => attr.name);
     const timers: NodeJS.Timeout[] = [];
 
     keys.forEach((key, index) => {
@@ -498,7 +507,7 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({
         {/* Pop-Out Card Body - Predefined and locked to fit our flight trajectory bounds without layout jumps */}
         <div 
           id="modal-card-body"
-          className={`relative rounded-3xl w-[calc(100vw-32px)] max-w-[420px] md:max-w-none md:w-[900px] h-[540px] xs:h-[590px] md:h-[min(700px,calc(100vh-32px))] max-h-[calc(100vh-64px)] shadow-[0_30px_100px_rgba(0,0,0,0.35)] flex flex-col md:flex-row border-0 overflow-hidden z-10 select-none ${
+          className={`relative rounded-3xl w-[calc(100vw-32px)] max-w-[420px] md:max-w-none md:w-[900px] h-[540px] xs:h-[590px] md:h-[min(700px,calc(100vh-32px))] max-h-[calc(100vh-64px)] shadow-[0_24px_80px_rgba(15,23,42,0.12),0_2px_8px_rgba(15,23,42,0.04)] flex flex-col md:flex-row border border-slate-200/60 overflow-hidden z-10 select-none ${
             (isTransitionActive || hasTransitionedRef.current) ? '' : 'animate-scale-up'
           }`}
           style={{ 
@@ -508,7 +517,6 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({
             background: '#ffffff',
           }}
         >
-        {/* Custom Themed Delicate Background Artwork Layer, masked with overflow-hidden container to respect rounded corners */}
         <div className="absolute inset-0 overflow-hidden rounded-3xl pointer-events-none select-none z-0">
           <CharacterThemedBackground character={character} />
         </div>
@@ -550,7 +558,7 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({
             <img 
               id="modal-character-img"
               src={character.image} 
-              alt={character.name}
+              alt={isFinale ? character.title : character.name}
               className="character-image absolute bottom-0 left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0 md:-left-14 h-[250px] md:h-[135%] z-12 object-contain origin-bottom max-w-none md:max-w-none pointer-events-auto transition-all duration-300"
               referrerPolicy="no-referrer"
             />
@@ -567,51 +575,63 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({
             transition: isTransitionActive ? 'none' : 'opacity 0.4s ease-out, transform 0.4s ease-out',
           }}
         >
-          <div className="relative z-25 max-w-md mx-auto md:max-w-none w-full px-2 sm:px-4 md:px-0">
-            {/* Header block */}
+          <div className="relative z-25 max-w-md mx-auto md:max-w-none w-full px-2 sm:px-4 md:px-0 flex-1 flex flex-col min-h-0">
             <header className="shrink-0">
-              <span 
-                className="text-[10px] md:text-[9px] font-bold tracking-[0.25em] uppercase"
-                style={{ color: character.color }}
-              >
-                {character.name}
-              </span>
+              {!isFinale && character.name && (
+                <span 
+                  className="text-base md:text-xs font-bold tracking-[0.2em] md:tracking-[0.25em] uppercase"
+                  style={{ color: character.color }}
+                >
+                  {character.name}
+                </span>
+              )}
 
-              <h2 id="modal-character-title" className="text-3xl sm:text-4xl md:text-[2rem] font-headline font-semibold text-slate-800 tracking-tight mt-1 leading-tight">
+              <h2
+                id="modal-character-title"
+                className={`text-4xl sm:text-[2.5rem] md:text-3xl font-headline font-semibold text-slate-800 tracking-tight leading-tight ${
+                  isFinale || !character.name ? '' : 'mt-1'
+                }`}
+              >
                 {character.title}
               </h2>
 
-              <p 
-                className="text-sm md:text-xs font-bold tracking-wide uppercase mt-1 mb-3 md:mb-2"
-                style={{ color: character.color }}
-              >
-                {character.subtitle}
-              </p>
+              {!isFinale && character.subtitle && (
+                <p 
+                  className="text-lg md:text-xs font-bold tracking-wide uppercase mt-1 mb-3 md:mb-3"
+                  style={{ color: character.color }}
+                >
+                  {character.subtitle}
+                </p>
+              )}
 
-              <div 
-                className="w-16 h-1 mb-4 md:mb-3 rounded-full"
-                style={{ backgroundColor: character.color }}
-              />
+              {!isFinale && (
+                <div 
+                  className="w-16 h-1 mb-4 md:mb-5 rounded-full"
+                  style={{ backgroundColor: character.color }}
+                />
+              )}
 
               <Paragraphs
                 paragraphs={character.description}
-                className="text-slate-600 leading-relaxed text-xs sm:text-sm md:text-[11px] md:leading-snug mb-4 md:mb-3"
+                className={`text-slate-600 leading-relaxed text-base md:text-xs md:leading-snug ${
+                  isFinale ? 'mt-4 mb-2' : 'mb-5 md:mb-3'
+                }`}
               />
             </header>
 
-            {/* Attributes + Extra */}
-            <div>
-              <SectionDivider label="Atributos Legendarios" />
+            {!isFinale && character.attributes.length > 0 && (
+              <div>
+                <SectionDivider label="Atributos Legendarios" />
 
-              <div className="space-y-3 md:space-y-2.5">
+                <div className="space-y-4 md:space-y-3.5">
                   {character.attributes.map((attr, index) => {
                     const barWidth = animate ? attr.value : 0;
                     const isTotalVisible = !!visibleTotals[attr.name];
 
                     return (
-                      <div key={attr.name} className="text-xs md:text-[10px]">
-                        <div className="flex items-baseline justify-between gap-3 mb-1">
-                          <span className="text-slate-800 font-bold uppercase tracking-wide text-[11px] md:text-[10px]">
+                      <div key={attr.name}>
+                        <div className="flex items-baseline justify-between gap-3 mb-1.5">
+                          <span className="text-slate-800 font-bold uppercase tracking-wide text-base md:text-xs">
                             {attr.name}
                           </span>
                           <StatValue value={attr.value} active={isTotalVisible} color={character.color} />
@@ -619,10 +639,10 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({
 
                         <Paragraphs
                           paragraphs={attr.description}
-                          className="text-slate-500 leading-snug text-[11px] md:text-[9px] md:leading-tight mb-1.5 md:mb-1"
+                          className="text-slate-500 leading-snug text-base md:text-xs md:leading-tight mb-2 md:mb-1"
                         />
 
-                        <div className="h-1.5 md:h-1 bg-slate-100 rounded-full relative overflow-hidden">
+                        <div className="h-2 md:h-1.5 bg-slate-100 rounded-full relative overflow-hidden">
                           <div 
                             className="h-full rounded-full absolute left-0 top-0 transition-all overflow-hidden"
                             style={{ 
@@ -648,16 +668,30 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({
                   })}
                 </div>
 
-              {character.extra && character.extra.length > 0 && (
-                <footer className="mt-4 md:mt-3 pt-1">
-                  <SectionDivider label="Extra" />
-                  <Paragraphs
-                    paragraphs={character.extra}
-                    className="text-slate-500 leading-relaxed text-xs md:text-[10px] md:leading-snug italic"
-                  />
-                </footer>
-              )}
-            </div>
+                {character.extra && character.extra.length > 0 && (
+                  <footer className="mt-4 md:mt-3 pt-1">
+                    <SectionDivider label="Extra" />
+                    <Paragraphs
+                      paragraphs={character.extra}
+                      className="text-slate-500 leading-relaxed text-base md:text-xs md:leading-snug italic"
+                    />
+                  </footer>
+                )}
+              </div>
+            )}
+
+            {footerAction && (
+              <footer className="mt-auto pt-6 border-t border-slate-200/80 flex justify-center shrink-0">
+                <button
+                  type="button"
+                  onClick={footerAction.onClick}
+                  className="flex items-center gap-2 px-6 py-2.5 rounded-full border border-slate-300 bg-white text-slate-700 hover:text-slate-900 shadow-[0_4px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_12px_24px_rgba(0,0,0,0.12)] hover:border-slate-400 hover:scale-105 active:scale-95 cursor-pointer transition-all duration-300 font-sans text-base md:text-xs font-semibold uppercase tracking-wider"
+                >
+                  <RefreshCw className="w-3 h-3" />
+                  {footerAction.label}
+                </button>
+              </footer>
+            )}
           </div>
         </div>
       </div>
