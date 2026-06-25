@@ -95,7 +95,7 @@ export const SoundBar: React.FC<SoundBarProps> = ({
       {/* Restored informative floating tooltip bubble on hover/selection */}
       <span
         id={`label-${character.id}`}
-        className="absolute -top-11 font-sans font-semibold tracking-wider text-[10px] transition-all duration-300 rounded-lg px-2 py-1 shadow-md z-25 pointer-events-none border border-slate-100 bg-white text-slate-700 text-center whitespace-nowrap"
+        className="absolute -top-12 font-sans font-semibold tracking-wider text-base md:text-xs transition-all duration-300 rounded-lg px-3 py-1.5 shadow-md z-25 pointer-events-none border border-slate-100 bg-white text-slate-700 text-center whitespace-nowrap"
         style={{
           transform: isInteractive && (isHovered || isSelected) && !isDimmed ? 'translateY(0) scale(1)' : 'translateY(8px) scale(0.95)',
           opacity: isInteractive && (isHovered || isSelected) && !isDimmed ? 1 : 0,

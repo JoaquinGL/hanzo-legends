@@ -47,6 +47,11 @@ export default function App() {
     setIsTransitioning(false);
     setIsTransitionComplete(false);
     setTransitionProgress(0);
+    setClickedCoords(null);
+  };
+
+  const handleCloseFinalJourney = () => {
+    setIsFinalAnimationActive(false);
   };
 
   // Trigger keyboard number keys dynamically to select characters
@@ -158,7 +163,7 @@ export default function App() {
           <div className='text-center max-w-3xl flex flex-col items-center'>
             <h1
               id='brand-title'
-              className='text-5xl md:text-6xl font-light text-slate-600 tracking-tight leading-none mb-1 text-center font-[Product Sans] animate-title-intro'
+              className='text-5xl sm:text-6xl md:text-5xl font-light text-slate-600 tracking-tight leading-none mb-1 text-center font-[Product Sans] animate-title-intro'
             >
               Hanzo Legends
             </h1>
@@ -167,7 +172,7 @@ export default function App() {
 
             <span
               id='brand-subtitle'
-              className='text-xl md:text-2xl text-slate-400 font-light tracking-wide text-center animate-subtitle-intro'
+              className='text-xl sm:text-2xl md:text-3xl text-slate-400 font-light tracking-wide text-center animate-subtitle-intro'
             >
               conoce la historia épica de cada departamento.
             </span>
@@ -183,7 +188,7 @@ export default function App() {
               >
                 <button
                   onClick={() => setIsFinalAnimationActive(true)}
-                  className='group relative flex items-center gap-2.5 px-6 py-3.5 rounded-full border border-slate-300 bg-white/90 text-slate-700 hover:text-slate-900 shadow-[0_4px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_12px_24px_rgba(129,140,248,0.18)] hover:border-indigo-400 hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer text-sm font-medium uppercase tracking-wider'
+                  className='group relative flex items-center gap-2.5 px-6 py-3.5 rounded-full border border-slate-300 bg-white/90 text-slate-700 hover:text-slate-900 shadow-[0_4px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_12px_24px_rgba(129,140,248,0.18)] hover:border-indigo-400 hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer text-base md:text-xs font-medium uppercase tracking-wider'
                 >
                   {/* Subtle pulsing background ring */}
                   <span className='absolute -inset-1 rounded-full border border-indigo-400/30 opacity-0 group-hover:opacity-100 group-hover:animate-ping pointer-events-none' />
@@ -293,6 +298,7 @@ export default function App() {
       {isFinalAnimationActive && (
         <FinalPathJourney
           characters={characters}
+          onClose={handleCloseFinalJourney}
           onReset={handleResetExperience}
         />
       )}

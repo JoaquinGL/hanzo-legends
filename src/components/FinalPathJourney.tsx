@@ -1,17 +1,28 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Character } from '../types';
-import { RefreshCw } from 'lucide-react';
+import { RefreshCw, X } from 'lucide-react';
+import finalImage from '../assets/images/final.png';
+
+const FINAL_DESCRIPTION = [
+  'Nacido de la unión de Cloud y Hanzo para convertirse en el guardián absoluto, la fusión definitiva entre espada y tormenta.',
+  'En él conviven dos fuerzas inseparables: la precisión samurái del detalle y la potencia disruptiva de la nube que escala sin límites.',
+  'No trabaja dentro del sistema, lo atraviesa actuando simultáneamente en todos los niveles del tablero, estrategia, experiencia y ejecución.',
+  'Dicen los veteranos que no es un personaje, es un late game event que aparece cuando el producto está en apuros, y aun así lo resuelve en un solo turno crítico.',
+];
 
 interface FinalPathJourneyProps {
   characters: Character[];
+  onClose: () => void;
   onReset: () => void;
 }
 
 export const FinalPathJourney: React.FC<FinalPathJourneyProps> = ({
   characters,
+  onClose,
   onReset,
 }) => {
   const [time, setTime] = useState(0);
+  const [tilt, setTilt] = useState({ x: 0, y: 0, active: false });
   const requestRef = useRef<number>(0);
   const startTimeRef = useRef<number | null>(null);
 
@@ -94,9 +105,9 @@ export const FinalPathJourney: React.FC<FinalPathJourneyProps> = ({
   const H = window.innerHeight;
 
   // Vertically centered closing card — paths converge near its upper edge
-  const FINAL_CARD_HEIGHT_EST = 460;
+  const FINAL_CARD_HEIGHT_EST = 560;
   const cardTopY = H * 0.5 - FINAL_CARD_HEIGHT_EST / 2;
-  const logoBottomY = cardTopY + 95;
+  const logoBottomY = cardTopY + 105;
 
   // HIGH PRECISION VIEWPORT CO-ORIENTATION & CAMERA ASCENT TIMER:
   // - Starts climbing at t = 0.2s and reaches 88% of centering at t = 4.2s (momentum stage where ribbons almost reach top).
@@ -238,6 +249,23 @@ export const FinalPathJourney: React.FC<FinalPathJourneyProps> = ({
   // Display replay/retry action button after the logo card is fully presented and settled
   const isFinished = elapsedSec >= 5.6;
 
+  const handleImageMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = (e.clientX - rect.left - rect.width / 2) / (rect.width / 2);
+    const y = (e.clientY - rect.top - rect.height / 2) / (rect.height / 2);
+    const maxTilt = 8;
+
+    setTilt({
+      x: -y * maxTilt,
+      y: x * maxTilt,
+      active: true,
+    });
+  };
+
+  const handleImageMouseLeave = () => {
+    setTilt({ x: 0, y: 0, active: false });
+  };
+
   return (
     <div
       id='final-path-journey-root'
@@ -282,143 +310,124 @@ export const FinalPathJourney: React.FC<FinalPathJourneyProps> = ({
         </svg>
       </div>
 
+      {/* Backdrop: click outside to close */}
+      {showLogo && (
+        <div
+          className='fixed inset-0 z-[5] pointer-events-auto bg-slate-950/35 backdrop-blur-[2px]'
+          onClick={onClose}
+          aria-hidden
+        />
+      )}
+
       {/* Centered logo destination dropping elegantly from outside the viewport on top of the paths */}
       {showLogo && (
         <div
-          className='absolute flex flex-col items-center text-center bg-white border border-slate-200/80 shadow-[0_24px_50px_rgba(0,0,0,0.22),0_8px_20px_rgba(0,0,0,0.08)] rounded-2xl px-8 pt-12 pb-6 sm:px-10 sm:pt-14 sm:pb-7 w-[calc(100vw-48px)] max-w-[280px] sm:max-w-[300px] z-10'
-          style={{
-            top: '50%',
-            left: '50%',
-            transform: `translate(-50%, calc(-50% + ${logoYOffset.toFixed(1)}px))`,
-            opacity: logoOpacity,
-            fontFamily: '"Space Grotesk", sans-serif',
+          id='final-card-container'
+          className='fixed inset-0 flex items-center justify-center px-4 sm:px-6 z-10 pointer-events-none'
+          onClick={(e) => {
+            if (e.target === e.currentTarget) onClose();
           }}
         >
-          {/* Subtle emblem ambient glow backplate */}
+          <div
+            id='final-card-body'
+            className='relative flex flex-row items-center gap-6 sm:gap-10 bg-white border border-slate-200/80 shadow-[0_24px_50px_rgba(0,0,0,0.22),0_8px_20px_rgba(0,0,0,0.08)] rounded-2xl w-full max-w-[900px] md:max-w-[960px] h-auto max-h-[calc(100vh-48px)] px-8 sm:px-12 md:px-14 py-8 sm:py-10 overflow-visible pointer-events-auto'
+            style={{
+              transform: `translateY(${logoYOffset.toFixed(1)}px)`,
+              opacity: logoOpacity,
+              fontFamily: '"Space Grotesk", sans-serif',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
           <div className='absolute -inset-10 rounded-full bg-slate-200/5 blur-3xl pointer-events-none' />
 
-          <div className='mb-8 sm:mb-10 py-3 flex items-center justify-center shrink-0 animate-[logoRevealScaleIn_800ms_cubic-bezier(0.16,1,0.3,1)_forwards] text-slate-950'>
-            <svg
-              width='72'
-              height='12'
-              viewBox='0 0 72 12'
-              fill='none'
-              xmlns='http://www.w3.org/2000/svg'
-              className='h-3.5 w-auto sm:hidden'
-              aria-hidden
+          <button
+            type='button'
+            onClick={onClose}
+            className='absolute top-4 right-4 sm:top-5 sm:right-5 text-slate-400 hover:text-slate-700 active:scale-95 transition-colors p-2 z-20 flex items-center justify-center cursor-pointer'
+            aria-label='Cerrar'
+          >
+            <X className='w-7 h-7 stroke-[2]' />
+          </button>
+
+          {/* Left: illustration with 3D tilt on hover */}
+          <div
+            className='relative w-[46%] sm:w-[48%] shrink-0 self-center flex items-center justify-center overflow-visible cursor-pointer select-none'
+            style={{ perspective: '1000px' }}
+            onMouseMove={handleImageMouseMove}
+            onMouseLeave={handleImageMouseLeave}
+          >
+            <div
+              className='flex items-center justify-center overflow-visible pointer-events-none p-2 sm:p-3'
+              style={{
+                transform: tilt.active
+                  ? `perspective(1000px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) scale3d(1.05, 1.05, 1.05)`
+                  : 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)',
+                transition: tilt.active
+                  ? 'transform 0.1s ease-out'
+                  : 'transform 0.6s cubic-bezier(0.25, 1, 0.4, 1)',
+                transformOrigin: 'center center',
+              }}
             >
-              <path d='M2 0V12' stroke='currentColor' strokeWidth='4' />
-              <path d='M70 0V12' stroke='currentColor' strokeWidth='4' />
-              <path d='M70 6H2' stroke='currentColor' strokeWidth='4' />
-            </svg>
-            <svg
-              aria-labelledby='hanzoLogoSmall'
-              xmlns='http://www.w3.org/2000/svg'
-              width='67'
-              height='15'
-              viewBox='0 0 67 15'
-              fill='none'
-              className='hidden h-4 w-auto sm:block md:hidden'
-            >
-              <title id='hanzoLogoSmall'>Hanzo logo</title>
-              <path d='M3 7.5H65' stroke='currentColor' strokeWidth='5' />
-              <path d='M64.5 15V0' stroke='currentColor' strokeWidth='5' />
-              <path d='M2.5 15V0' stroke='currentColor' strokeWidth='5' />
-            </svg>
-            <svg
-              aria-labelledby='hanzoLogoMedium'
-              xmlns='http://www.w3.org/2000/svg'
-              width='96'
-              height='17'
-              viewBox='0 0 96 17'
-              fill='none'
-              className='hidden h-4 w-auto md:block lg:hidden'
-            >
-              <title id='hanzoLogoMedium'>Hanzo logo</title>
-              <path d='M2 8.5H92.7042' stroke='currentColor' strokeWidth='5' />
-              <path d='M93.3521 17V0' stroke='currentColor' strokeWidth='5' />
-              <path d='M2.64789 17V0' stroke='currentColor' strokeWidth='5' />
-            </svg>
-            <svg
-              aria-labelledby='hanzoLogoLarge'
-              xmlns='http://www.w3.org/2000/svg'
-              width='114'
-              height='20'
-              viewBox='0 0 114 20'
-              fill='none'
-              className='hidden h-5 w-auto lg:block'
-            >
-              <title id='hanzoLogoLarge'>Hanzo logo</title>
-              <path d='M6 10H108' stroke='currentColor' strokeWidth='6' />
-              <path d='M111 20V0' stroke='currentColor' strokeWidth='6' />
-              <path d='M3 20V0' stroke='currentColor' strokeWidth='6' />
-            </svg>
+              <img
+                src={finalImage}
+                alt='El Samurai de la Nube'
+                className='max-h-[min(440px,calc(100vh-300px))] sm:max-h-[min(520px,calc(100vh-280px))] md:max-h-[min(560px,calc(100vh-260px))] max-w-full w-auto h-auto object-contain object-center pointer-events-auto animate-[logoRevealScaleIn_800ms_cubic-bezier(0.16,1,0.3,1)_forwards]'
+              />
+            </div>
           </div>
 
-          <h2
-            className='text-xl sm:text-2xl font-bold text-slate-950 tracking-tight leading-tight mb-4 text-center'
-            style={{
-              fontFamily: '"Space Grotesk", sans-serif',
-              animation:
-                'logoRevealSlideUp 800ms cubic-bezier(0.16, 1, 0.3, 1) 400ms forwards',
-              opacity: 0,
-            }}
-          >
-            Hanzo Legends.
-          </h2>
-
-          <p
-            className='text-slate-500 font-medium tracking-widest uppercase text-[8px] sm:text-[9px] leading-relaxed mb-6 px-1'
-            style={{
-              fontFamily: '"JetBrains Mono", monospace',
-              animation:
-                'logoRevealSlideUp 800ms cubic-bezier(0.16, 1, 0.3, 1) 600ms forwards',
-              opacity: 0,
-            }}
-          >
-            — capítulo final : la unión de caminos —
-          </p>
-
-          <div
-            className='w-10 h-px bg-slate-200/80 my-2 self-center'
-            style={{
-              animation:
-                'logoRevealSlideUp 800ms cubic-bezier(0.16, 1, 0.3, 1) 700ms forwards',
-              opacity: 0,
-            }}
-          />
-
-          <span
-            className='text-[10px] sm:text-[11px] text-slate-600 font-sans tracking-wide max-w-[220px] block leading-relaxed mt-4'
-            style={{
-              fontFamily: '"Inter", sans-serif',
-              animation:
-                'logoRevealSlideUp 800ms cubic-bezier(0.16, 1, 0.3, 1) 950ms forwards',
-              opacity: 0,
-            }}
-          >
-            Has recorrido todos los senderos de la leyenda. La hermandad ha
-            unificado sus vibraciones para dar paso al nuevo amanecer.
-          </span>
-
-          <div
-            className='mt-8 pt-5 w-full border-t border-slate-100 flex flex-col items-center transition-all duration-700'
-            style={{
-              opacity: isFinished ? 1 : 0,
-              transform: isFinished
-                ? 'translateY(0) scale(1)'
-                : 'translateY(10px) scale(0.98)',
-              pointerEvents: isFinished ? 'auto' : 'none',
-            }}
-          >
-            <button
-              onClick={onReset}
-              className='flex items-center gap-2 px-6 py-2.5 rounded-full border border-slate-300 bg-white text-slate-700 hover:text-slate-900 shadow-[0_4px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_12px_24px_rgba(0,0,0,0.12)] hover:border-slate-400 hover:scale-105 active:scale-95 cursor-pointer transition-all duration-300 font-sans text-xs font-semibold uppercase tracking-wider'
+          {/* Right: title, description and action */}
+          <div className='flex flex-col flex-1 min-w-0 self-center justify-center gap-4 sm:gap-5 md:gap-6'>
+            <h2
+              className='text-xl sm:text-2xl md:text-3xl font-bold text-slate-950 tracking-tight leading-tight shrink-0'
+              style={{
+                animation:
+                  'logoRevealSlideUp 800ms cubic-bezier(0.16, 1, 0.3, 1) 400ms forwards',
+                opacity: 0,
+              }}
             >
-              <RefreshCw className='w-3 h-3 animate-spin-reverse' />
-              Repetir experiencia
-            </button>
+              El Samurai de la Nube
+            </h2>
+
+            <div
+              className='flex flex-col gap-2.5 sm:gap-3'
+              style={{
+                animation:
+                  'logoRevealSlideUp 800ms cubic-bezier(0.16, 1, 0.3, 1) 600ms forwards',
+                opacity: 0,
+              }}
+            >
+              {FINAL_DESCRIPTION.map((paragraph) => (
+                <p
+                  key={paragraph.slice(0, 24)}
+                  className='text-xs sm:text-sm md:text-base text-slate-600 leading-relaxed'
+                  style={{ fontFamily: '"Inter", sans-serif' }}
+                >
+                  {paragraph}
+                </p>
+              ))}
+            </div>
+
+            <div
+              className='w-full flex flex-col items-start shrink-0 transition-all duration-700'
+              style={{
+                opacity: isFinished ? 1 : 0,
+                transform: isFinished
+                  ? 'translateY(0) scale(1)'
+                  : 'translateY(10px) scale(0.98)',
+                pointerEvents: isFinished ? 'auto' : 'none',
+              }}
+            >
+              <button
+                onClick={onReset}
+                className='flex items-center gap-2.5 px-7 py-3 rounded-full border border-slate-300 bg-white text-slate-700 hover:text-slate-900 shadow-[0_4px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_12px_24px_rgba(0,0,0,0.12)] hover:border-slate-400 hover:scale-105 active:scale-95 cursor-pointer transition-all duration-300 font-sans text-sm font-semibold uppercase tracking-wider'
+              >
+                <RefreshCw className='w-4 h-4 animate-spin-reverse' />
+                Repetir experiencia
+              </button>
+            </div>
           </div>
+        </div>
         </div>
       )}
 
