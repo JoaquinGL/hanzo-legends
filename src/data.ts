@@ -47,7 +47,7 @@ export const characters: Character[] = [
         ],
       },
       {
-        name: 'Inteligencia',
+        name: 'Pixel Perfect',
         value: 90,
         description: [
           'Poder ancestral que impide dormir cuando algo está desplazado 3 píxeles a la derecha',
