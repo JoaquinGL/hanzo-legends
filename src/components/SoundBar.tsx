@@ -46,15 +46,15 @@ export const SoundBar: React.FC<SoundBarProps> = ({
 
     let animId: number;
     const startTimeStamp = Date.now();
-    const speed = 1.0 + Math.random() * 0.3; // Slower, highly subtle speed
+    const speed = 1.0 + Math.random() * 0.3;
+    const phaseOffset = index * 0.45;
 
     const tick = () => {
-      // Use elapsed time from start so wave starts exactly at 0 (sin(0) = 0), matching scale 1.0 perfectly
       const elapsed = (Date.now() - startTimeStamp) * 0.0015;
-      const wave = Math.sin(elapsed * speed);
-      
-      // Extremely subtle breathing scale variant (between 0.985 and 1.015)
-      const baseVariation = isSelected ? 0.01 : isHovered ? 0.012 : 0.015;
+      const wave = Math.sin(elapsed * speed + phaseOffset);
+
+      // Scale from bottom only — bars stay glued to the viewport edge
+      const baseVariation = isSelected ? 0.01 : isHovered ? 0.014 : 0.02;
       setBreatheScale(1 + wave * baseVariation);
 
       animId = requestAnimationFrame(tick);
@@ -62,24 +62,28 @@ export const SoundBar: React.FC<SoundBarProps> = ({
 
     tick();
     return () => cancelAnimationFrame(animId);
-  }, [isHovered, isSelected, isIntroComplete]);
+  }, [isHovered, isSelected, isIntroComplete, index]);
 
   const baseHeight = randomBaseHeight;
-  
+
   // Calculate heights according to current state
   let targetHeight = baseHeight;
   const showSelectedBoost = isSelected && !isTotallyHidden;
   if (showSelectedBoost) {
-    targetHeight = baseHeight + 5.5; 
+    targetHeight = baseHeight + 5.5;
   } else if (isHovered && isInteractive) {
-    targetHeight = baseHeight + 3.0; 
+    targetHeight = baseHeight + 3.0;
   }
 
   return (
     <div
       id={`bar-group-${character.id}`}
       className={`relative flex flex-col items-center w-[52px] sm:w-[68px] origin-bottom transition-all duration-500 ${
-        !isInteractive ? 'pointer-events-none cursor-default' : isDimmed ? 'opacity-30 scale-[0.88] pointer-events-none' : 'cursor-pointer'
+        !isInteractive
+          ? 'pointer-events-none cursor-default'
+          : isDimmed
+            ? 'opacity-30 scale-[0.88] pointer-events-none'
+            : 'cursor-pointer'
       }`}
       onMouseEnter={() => isInteractive && !isDimmed && setIsHovered(true)}
       onMouseLeave={() => isInteractive && !isDimmed && setIsHovered(false)}
@@ -95,10 +99,14 @@ export const SoundBar: React.FC<SoundBarProps> = ({
       {/* Restored informative floating tooltip bubble on hover/selection */}
       <span
         id={`label-${character.id}`}
-        className="absolute -top-12 font-sans font-semibold tracking-wider text-base md:text-xs transition-all duration-300 rounded-lg px-3 py-1.5 shadow-md z-25 pointer-events-none border border-slate-100 bg-white text-slate-700 text-center whitespace-nowrap"
+        className='absolute -top-12 font-sans font-semibold tracking-wider text-base md:text-xs transition-all duration-300 rounded-lg px-3 py-1.5 shadow-md z-25 pointer-events-none border border-slate-100 bg-white text-slate-700 text-center whitespace-nowrap'
         style={{
-          transform: isInteractive && (isHovered || isSelected) && !isDimmed ? 'translateY(0) scale(1)' : 'translateY(8px) scale(0.95)',
-          opacity: isInteractive && (isHovered || isSelected) && !isDimmed ? 1 : 0,
+          transform:
+            isInteractive && (isHovered || isSelected) && !isDimmed
+              ? 'translateY(0) scale(1)'
+              : 'translateY(8px) scale(0.95)',
+          opacity:
+            isInteractive && (isHovered || isSelected) && !isDimmed ? 1 : 0,
         }}
       >
         {character.name}
@@ -109,45 +117,52 @@ export const SoundBar: React.FC<SoundBarProps> = ({
         id={`bar-main-${character.id}`}
         className={`w-9 sm:w-11 rounded-t-full relative flex flex-col justify-end pb-3 items-center overflow-hidden border-t border-white/40 select-none
           ${!isIntroComplete ? 'animate-strip-intro' : 'transition-all duration-500 ease-[cubic-bezier(0.25,1,0.5,1)]'}
-          ${isTotallyHidden ? 'opacity-0 pointer-events-none' : isSelected 
-            ? 'opacity-100 ring-4 ring-white shadow-[0_-12px_30px_rgba(255,255,255,0.45)] brightness-105 z-20' 
-            : 'opacity-85 shadow-md z-10'
+          ${
+            isTotallyHidden
+              ? 'opacity-0 pointer-events-none'
+              : isSelected
+                ? 'opacity-100 ring-4 ring-white shadow-[0_-12px_30px_rgba(255,255,255,0.45)] brightness-105 z-20'
+                : 'opacity-85 shadow-md z-10'
           }`}
         style={{
           backgroundColor: character.color,
           height: `${targetHeight}vh`,
-          transform: !isIntroComplete 
-            ? undefined 
+          transform: !isIntroComplete
+            ? undefined
             : `scaleY(${isDimmed ? 1.0 : breatheScale})`,
           transformOrigin: 'bottom center',
-          animationDelay: !isIntroComplete ? `${500 + index * 100}ms` : undefined,
+          animationDelay: !isIntroComplete
+            ? `${500 + index * 100}ms`
+            : undefined,
           opacity: isTotallyHidden ? 0 : undefined,
           transition: isTotallyHidden
             ? 'opacity 260ms ease-out, height 500ms ease-[cubic-bezier(0.25,1,0.5,1)]'
             : undefined,
-          boxShadow: isTotallyHidden 
+          boxShadow: isTotallyHidden
             ? 'none'
             : isHovered && isInteractive && !isDimmed
-              ? `0 -6px 18px ${character.color}75` 
+              ? `0 -6px 18px ${character.color}75`
               : isSelected
                 ? `0 -10px 25px ${character.color}90`
                 : `0 -2px 6px ${character.color}15`,
         }}
       >
         {/* White glowing dot inside bar */}
-        <div 
-          className="w-1.5 h-1.5 rounded-full bg-white absolute top-3 shadow-[0_0_8px_#fff] transition-all duration-300"
+        <div
+          className='w-1.5 h-1.5 rounded-full bg-white absolute top-3 shadow-[0_0_8px_#fff] transition-all duration-300'
           style={{
-            transform: isHovered ? 'scale(1.3)' : isSelected ? 'scale(1.5)' : 'scale(1)',
+            transform: isHovered
+              ? 'scale(1.3)'
+              : isSelected
+                ? 'scale(1.5)'
+                : 'scale(1)',
             opacity: isSelected ? 0.95 : 0.7,
           }}
         />
 
         {/* Dynamic scanline transition effect inside chosen bar */}
         {isSelected && (
-          <div 
-            className="absolute left-0 right-0 h-4 bg-gradient-to-b from-transparent via-white/30 to-transparent animate-scanline pointer-events-none"
-          />
+          <div className='absolute left-0 right-0 h-4 bg-gradient-to-b from-transparent via-white/30 to-transparent animate-scanline pointer-events-none' />
         )}
       </div>
     </div>

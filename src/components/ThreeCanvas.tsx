@@ -23,12 +23,15 @@ export const ThreeCanvas: React.FC<ThreeCanvasProps> = ({
 
   const particlesRef = useRef<THREE.Points | null>(null);
   const particleCount = 250;
-  const particleData = useRef<{ pos: THREE.Vector3; speed: THREE.Vector3 }[]>([]);
+  const particleData = useRef<{ pos: THREE.Vector3; speed: THREE.Vector3 }[]>(
+    [],
+  );
 
   // Update sizes on window resize
   useEffect(() => {
     const handleResize = () => {
-      if (!mountRef.current || !rendererRef.current || !cameraRef.current) return;
+      if (!mountRef.current || !rendererRef.current || !cameraRef.current)
+        return;
       const width = mountRef.current.clientWidth;
       const height = mountRef.current.clientHeight;
 
@@ -92,7 +95,7 @@ export const ThreeCanvas: React.FC<ThreeCanvasProps> = ({
         speed: new THREE.Vector3(
           (Math.random() - 0.5) * 0.005,
           (Math.random() - 0.5) * 0.005 + 0.004,
-          (Math.random() - 0.5) * 0.005
+          (Math.random() - 0.5) * 0.005,
         ),
       });
 
@@ -136,7 +139,8 @@ export const ThreeCanvas: React.FC<ThreeCanvasProps> = ({
     const animate = () => {
       // Rotate sparkles ambiently
       if (particlesRef.current) {
-        const positionsArr = particlesRef.current.geometry.attributes.position.array as Float32Array;
+        const positionsArr = particlesRef.current.geometry.attributes.position
+          .array as Float32Array;
         for (let i = 0; i < particleCount; i++) {
           const data = particleData.current[i];
           data.pos.add(data.speed);
@@ -170,10 +174,10 @@ export const ThreeCanvas: React.FC<ThreeCanvasProps> = ({
   }, []);
 
   return (
-    <div 
-      ref={mountRef} 
-      className="absolute inset-0 w-full h-full z-0 pointer-events-none" 
-      id="three-canvas-root"
+    <div
+      ref={mountRef}
+      className='absolute inset-0 w-full h-full z-0 pointer-events-none'
+      id='three-canvas-root'
     />
   );
 };

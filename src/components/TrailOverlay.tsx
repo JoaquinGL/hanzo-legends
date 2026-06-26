@@ -55,7 +55,7 @@ export const TrailOverlay: React.FC<TrailOverlayProps> = ({
 
   // Sizing locks perfectly with CharacterCard for flawless visual continuity
   const isDesktop = dimensions.width >= 768;
-  const cardW = isDesktop ? 840 : (dimensions.width - 32);
+  const cardW = isDesktop ? 840 : dimensions.width - 32;
   const cardH = isDesktop ? 580 : 540;
 
   const x0 = cx - cardW / 2;
@@ -74,7 +74,14 @@ export const TrailOverlay: React.FC<TrailOverlayProps> = ({
   const y2_world = y2 + Y_offset;
 
   const pathParamsRef = useRef<{
-    style: 'loop-left' | 'loop-right' | 'double-wave-left' | 'double-wave-right' | 'swoop-left' | 'swoop-right' | 'tornado';
+    style:
+      | 'loop-left'
+      | 'loop-right'
+      | 'double-wave-left'
+      | 'double-wave-right'
+      | 'swoop-left'
+      | 'swoop-right'
+      | 'tornado';
     vars: Record<string, number>;
   } | null>(null);
 
@@ -86,10 +93,10 @@ export const TrailOverlay: React.FC<TrailOverlayProps> = ({
       'double-wave-right',
       'swoop-left',
       'swoop-right',
-      'tornado'
+      'tornado',
     ] as const;
     const randomStyle = styles[Math.floor(Math.random() * styles.length)];
-    
+
     const vars: Record<string, number> = {};
     for (let i = 1; i <= 12; i++) {
       vars[`r${i}`] = Math.random() * 2 - 1; // Valores entre -1 y 1
@@ -103,7 +110,7 @@ export const TrailOverlay: React.FC<TrailOverlayProps> = ({
     if (!pathParamsRef.current) return `${prefix} L ${x1} -200`;
 
     const { style, vars } = pathParamsRef.current;
-    
+
     const r1 = vars.r1;
     const r2 = vars.r2;
     const r3 = vars.r3;
@@ -119,51 +126,68 @@ export const TrailOverlay: React.FC<TrailOverlayProps> = ({
 
     switch (style) {
       case 'loop-left':
-        return `${prefix} ` +
-          `C ${startX - 180 + r1*40} ${vLimit - 40 + r2*20}, ${startX - 300 + r3*50} ${vLimit - 100 + r4*30}, ${startX - 250 + r5*50} ${vLimit - 150 + r6*30} ` +
-          `C ${startX - 200 + r7*50} ${vLimit - 250 + r8*30}, ${startX + 150 + r9*60} ${vLimit - 300 + r10*40}, ${cx + 80 + r11*60} ${vLimit - 380 + r12*40} ` +
-          `C ${cx + 250 + r1*60} ${vLimit - 500 + r2*40}, ${x1 + 100 + r3*40} ${-150 + r4*35}, ${x1} -200`;
+        return (
+          `${prefix} ` +
+          `C ${startX - 180 + r1 * 40} ${vLimit - 40 + r2 * 20}, ${startX - 300 + r3 * 50} ${vLimit - 100 + r4 * 30}, ${startX - 250 + r5 * 50} ${vLimit - 150 + r6 * 30} ` +
+          `C ${startX - 200 + r7 * 50} ${vLimit - 250 + r8 * 30}, ${startX + 150 + r9 * 60} ${vLimit - 300 + r10 * 40}, ${cx + 80 + r11 * 60} ${vLimit - 380 + r12 * 40} ` +
+          `C ${cx + 250 + r1 * 60} ${vLimit - 500 + r2 * 40}, ${x1 + 100 + r3 * 40} ${-150 + r4 * 35}, ${x1} -200`
+        );
 
       case 'loop-right':
-        return `${prefix} ` +
-          `C ${startX + 180 + r1*40} ${vLimit - 40 + r2*20}, ${startX + 300 + r3*50} ${vLimit - 100 + r4*30}, ${startX + 250 + r5*50} ${vLimit - 150 + r6*30} ` +
-          `C ${startX + 200 + r7*50} ${vLimit - 250 + r8*30}, ${startX - 150 + r9*60} ${vLimit - 300 + r10*40}, ${cx - 80 + r11*60} ${vLimit - 380 + r12*40} ` +
-          `C ${cx - 200 + r1*60} ${vLimit - 500 + r2*40}, ${x1 + 80 + r3*40} ${-150 + r4*35}, ${x1} -200`;
+        return (
+          `${prefix} ` +
+          `C ${startX + 180 + r1 * 40} ${vLimit - 40 + r2 * 20}, ${startX + 300 + r3 * 50} ${vLimit - 100 + r4 * 30}, ${startX + 250 + r5 * 50} ${vLimit - 150 + r6 * 30} ` +
+          `C ${startX + 200 + r7 * 50} ${vLimit - 250 + r8 * 30}, ${startX - 150 + r9 * 60} ${vLimit - 300 + r10 * 40}, ${cx - 80 + r11 * 60} ${vLimit - 380 + r12 * 40} ` +
+          `C ${cx - 200 + r1 * 60} ${vLimit - 500 + r2 * 40}, ${x1 + 80 + r3 * 40} ${-150 + r4 * 35}, ${x1} -200`
+        );
 
       case 'double-wave-left':
-        return `${prefix} ` +
-          `C ${startX - 120 + r1*30} ${vLimit - 60}, ${startX - 220 + r2*30} ${vLimit - 130}, ${startX - 180 + r3*40} ${vLimit - 200 + r4*30} ` +
-          `C ${startX - 140 + r5*30} ${vLimit - 270}, ${startX + 140 + r6*40} ${vLimit - 330}, ${startX + 180 + r7*40} ${vLimit - 400 + r8*30} ` +
-          `C ${startX + 220 + r9*40} ${vLimit - 470}, ${x1 + 60} ${-160 + r10*30}, ${x1} -200`;
+        return (
+          `${prefix} ` +
+          `C ${startX - 120 + r1 * 30} ${vLimit - 60}, ${startX - 220 + r2 * 30} ${vLimit - 130}, ${startX - 180 + r3 * 40} ${vLimit - 200 + r4 * 30} ` +
+          `C ${startX - 140 + r5 * 30} ${vLimit - 270}, ${startX + 140 + r6 * 40} ${vLimit - 330}, ${startX + 180 + r7 * 40} ${vLimit - 400 + r8 * 30} ` +
+          `C ${startX + 220 + r9 * 40} ${vLimit - 470}, ${x1 + 60} ${-160 + r10 * 30}, ${x1} -200`
+        );
 
       case 'double-wave-right':
-        return `${prefix} ` +
-          `C ${startX + 120 + r1*30} ${vLimit - 60}, ${startX + 220 + r2*30} ${vLimit - 130}, ${startX + 180 + r3*40} ${vLimit - 200 + r4*30} ` +
-          `C ${startX + 140 + r5*30} ${vLimit - 270}, ${startX - 140 + r6*40} ${vLimit - 330}, ${startX - 180 + r7*40} ${vLimit - 400 + r8*30} ` +
-          `C ${startX - 220 + r9*40} ${vLimit - 470}, ${x1 + 60} ${-160 + r10*30}, ${x1} -200`;
+        return (
+          `${prefix} ` +
+          `C ${startX + 120 + r1 * 30} ${vLimit - 60}, ${startX + 220 + r2 * 30} ${vLimit - 130}, ${startX + 180 + r3 * 40} ${vLimit - 200 + r4 * 30} ` +
+          `C ${startX + 140 + r5 * 30} ${vLimit - 270}, ${startX - 140 + r6 * 40} ${vLimit - 330}, ${startX - 180 + r7 * 40} ${vLimit - 400 + r8 * 30} ` +
+          `C ${startX - 220 + r9 * 40} ${vLimit - 470}, ${x1 + 60} ${-160 + r10 * 30}, ${x1} -200`
+        );
 
       case 'swoop-left':
-        return `${prefix} ` +
-          `C ${startX - 150 + r1*40} ${vLimit - 40}, ${startX - 280 + r2*50} ${vLimit - 90}, ${startX - 300 + r3*60} ${vLimit - 150 + r4*40} ` +
-          `C ${startX - 320 + r5*60} ${vLimit - 220}, ${cx - 280 + r6*60} ${vLimit - 350}, ${cx - 150 + r7*50} ${vLimit - 420 + r8*40} ` +
-          `C ${cx - 50 + r9*50} ${vLimit - 490}, ${x1 + 120} -120, ${x1} -200`;
+        return (
+          `${prefix} ` +
+          `C ${startX - 150 + r1 * 40} ${vLimit - 40}, ${startX - 280 + r2 * 50} ${vLimit - 90}, ${startX - 300 + r3 * 60} ${vLimit - 150 + r4 * 40} ` +
+          `C ${startX - 320 + r5 * 60} ${vLimit - 220}, ${cx - 280 + r6 * 60} ${vLimit - 350}, ${cx - 150 + r7 * 50} ${vLimit - 420 + r8 * 40} ` +
+          `C ${cx - 50 + r9 * 50} ${vLimit - 490}, ${x1 + 120} -120, ${x1} -200`
+        );
 
       case 'swoop-right':
-        return `${prefix} ` +
-          `C ${startX + 150 + r1*40} ${vLimit - 40}, ${startX + 280 + r2*50} ${vLimit - 90}, ${startX + 300 + r3*60} ${vLimit - 150 + r4*40} ` +
-          `C ${startX + 320 + r5*60} ${vLimit - 220}, ${cx + 280 + r6*60} ${vLimit - 350}, ${cx + 150 + r7*50} ${vLimit - 420 + r8*40} ` +
-          `C ${cx + 50 + r9*50} ${vLimit - 490}, ${x1 + 120} -120, ${x1} -200`;
+        return (
+          `${prefix} ` +
+          `C ${startX + 150 + r1 * 40} ${vLimit - 40}, ${startX + 280 + r2 * 50} ${vLimit - 90}, ${startX + 300 + r3 * 60} ${vLimit - 150 + r4 * 40} ` +
+          `C ${startX + 320 + r5 * 60} ${vLimit - 220}, ${cx + 280 + r6 * 60} ${vLimit - 350}, ${cx + 150 + r7 * 50} ${vLimit - 420 + r8 * 40} ` +
+          `C ${cx + 50 + r9 * 50} ${vLimit - 490}, ${x1 + 120} -120, ${x1} -200`
+        );
 
       case 'tornado':
       default:
-        return `${prefix} ` +
-          `C ${startX + 100 + r1*30} ${vLimit - 50}, ${startX - 100 + r2*30} ${vLimit - 120}, ${startX - 50 + r3*30} ${vLimit - 180 + r4*20} ` +
-          `C ${startX + 200 + r5*40} ${vLimit - 240}, ${cx - 100 + r6*40} ${vLimit - 300}, ${cx + 120 + r7*40} ${vLimit - 360 + r8*30} ` +
-          `C ${cx + 320 + r9*50} ${vLimit - 420}, ${x1 - 10} ${-140 + r10*20}, ${x1} -200`;
+        return (
+          `${prefix} ` +
+          `C ${startX + 100 + r1 * 30} ${vLimit - 50}, ${startX - 100 + r2 * 30} ${vLimit - 120}, ${startX - 50 + r3 * 30} ${vLimit - 180 + r4 * 20} ` +
+          `C ${startX + 200 + r5 * 40} ${vLimit - 240}, ${cx - 100 + r6 * 40} ${vLimit - 300}, ${cx + 120 + r7 * 40} ${vLimit - 360 + r8 * 30} ` +
+          `C ${cx + 320 + r9 * 50} ${vLimit - 420}, ${x1 - 10} ${-140 + r10 * 20}, ${x1} -200`
+        );
     }
   };
 
-  const getDynamicUnifiedPathData = (currCameraY: number, currTranslateY: number): string => {
+  const getDynamicUnifiedPathData = (
+    currCameraY: number,
+    currTranslateY: number,
+  ): string => {
     const flightPath = getFlightPathData();
     const y0_w = y0 + currTranslateY + currCameraY;
     const y2_w = y2 + currTranslateY + currCameraY;
@@ -173,20 +197,24 @@ export const TrailOverlay: React.FC<TrailOverlayProps> = ({
 
     // Wraps the card exactly at its world position
     const R = 24;
-    const wrapContour = `L ${x1 - R} ${y2_w} ` +
-                        `Q ${x1} ${y2_w} ${x1} ${y2_w - R} ` +
-                        `L ${x1} ${y0_w + R} ` +
-                        `Q ${x1} ${y0_w} ${x1 - R} ${y0_w} ` +
-                        `L ${x0 + R} ${y0_w} ` +
-                        `Q ${x0} ${y0_w} ${x0} ${y0_w + R} ` +
-                        `L ${x0} ${y2_w - R} ` +
-                        `Q ${x0} ${y2_w} ${x0 + R} ${y2_w} ` +
-                        `L ${cx} ${y2_w}`;
+    const wrapContour =
+      `L ${x1 - R} ${y2_w} ` +
+      `Q ${x1} ${y2_w} ${x1} ${y2_w - R} ` +
+      `L ${x1} ${y0_w + R} ` +
+      `Q ${x1} ${y0_w} ${x1 - R} ${y0_w} ` +
+      `L ${x0 + R} ${y0_w} ` +
+      `Q ${x0} ${y0_w} ${x0} ${y0_w + R} ` +
+      `L ${x0} ${y2_w - R} ` +
+      `Q ${x0} ${y2_w} ${x0 + R} ${y2_w} ` +
+      `L ${cx} ${y2_w}`;
 
     return `${flightPath} ${transitionCurve} ${wrapContour}`;
   };
 
-  const getDynamicFlightAndTransitionData = (currCameraY: number, currTranslateY: number): string => {
+  const getDynamicFlightAndTransitionData = (
+    currCameraY: number,
+    currTranslateY: number,
+  ): string => {
     const flightPath = getFlightPathData();
     const y2_w = y2 + currTranslateY + currCameraY;
     const transitionCurve = `C ${x1 - 80} -100, ${cx - 120} ${y2_w + 120}, ${cx} ${y2_w}`;
@@ -195,24 +223,40 @@ export const TrailOverlay: React.FC<TrailOverlayProps> = ({
 
   const initialTranslateY = -dimensions.height - 150;
   const initialUnifiedPathD = getDynamicUnifiedPathData(0, initialTranslateY);
-  const initialFlightAndTransitionD = getDynamicFlightAndTransitionData(0, initialTranslateY);
+  const initialFlightAndTransitionD = getDynamicFlightAndTransitionData(
+    0,
+    initialTranslateY,
+  );
 
   // Unified high fidelity animation
   useEffect(() => {
     // Cubic-bezier solver for high-fidelity custom easing curves
-    const solveCubicBezier = (x1: number, y1: number, x2: number, y2: number) => {
+    const solveCubicBezier = (
+      x1: number,
+      y1: number,
+      x2: number,
+      y2: number,
+    ) => {
       return (x: number) => {
         if (x <= 0) return 0;
         if (x >= 1) return 1;
         let t = x;
         // Newton-Raphson iteration to solve for parametric t
         for (let i = 0; i < 8; i++) {
-          const currentX = 3 * (1 - t) * (1 - t) * t * x1 + 3 * (1 - t) * t * t * x2 + t * t * t;
-          const derivativeX = 3 * (1 - t) * (1 - t) * x1 + 6 * (1 - t) * t * (x2 - x1) + 3 * t * t * (1 - x2);
+          const currentX =
+            3 * (1 - t) * (1 - t) * t * x1 +
+            3 * (1 - t) * t * t * x2 +
+            t * t * t;
+          const derivativeX =
+            3 * (1 - t) * (1 - t) * x1 +
+            6 * (1 - t) * t * (x2 - x1) +
+            3 * t * t * (1 - x2);
           if (Math.abs(derivativeX) < 1e-6) break;
           t -= (currentX - x) / derivativeX;
         }
-        return 3 * (1 - t) * (1 - t) * t * y1 + 3 * (1 - t) * t * t * y2 + t * t * t;
+        return (
+          3 * (1 - t) * (1 - t) * t * y1 + 3 * (1 - t) * t * t * y2 + t * t * t
+        );
       };
     };
 
@@ -245,7 +289,7 @@ export const TrailOverlay: React.FC<TrailOverlayProps> = ({
       let cardTranslateY = 0;
       if (t < 0.45) {
         cardTranslateY = -dimensions.height - 150;
-      } else if (t <= 0.80) {
+      } else if (t <= 0.8) {
         const p_card = (t - 0.45) / 0.35;
         const ease = 1 - Math.pow(1 - p_card, 3); // smooth cubic ease-out
         cardTranslateY = (-dimensions.height - 150) * (1 - ease);
@@ -254,8 +298,14 @@ export const TrailOverlay: React.FC<TrailOverlayProps> = ({
       }
 
       // Generate accurate dynamic frames based on real-time layout
-      const currentUnifiedD = getDynamicUnifiedPathData(cameraY, cardTranslateY);
-      const currentFlightAndTransitionD = getDynamicFlightAndTransitionData(cameraY, cardTranslateY);
+      const currentUnifiedD = getDynamicUnifiedPathData(
+        cameraY,
+        cardTranslateY,
+      );
+      const currentFlightAndTransitionD = getDynamicFlightAndTransitionData(
+        cameraY,
+        cardTranslateY,
+      );
 
       if (pathRef.current) {
         pathRef.current.setAttribute('d', currentUnifiedD);
@@ -279,9 +329,10 @@ export const TrailOverlay: React.FC<TrailOverlayProps> = ({
         flightFraction = flightLength / totalLength;
       }
 
-      const verticalFraction = totalLength > 0
-        ? Math.min(verticalPrefixLength / totalLength, flightFraction)
-        : 0;
+      const verticalFraction =
+        totalLength > 0
+          ? Math.min(verticalPrefixLength / totalLength, flightFraction)
+          : 0;
 
       const stemReveal = verticalFraction * getStemReveal(t);
 
@@ -290,7 +341,7 @@ export const TrailOverlay: React.FC<TrailOverlayProps> = ({
       if (t <= 0.45) {
         const p = t / 0.45;
         drawProgress = p * flightFraction;
-      } else if (t <= 0.80) {
+      } else if (t <= 0.8) {
         const p = (t - 0.45) / 0.35;
         const ease = 1.0 - Math.pow(1.0 - p, 3); // beautiful cubic ease-out matching card settle
         drawProgress = flightFraction + ease * (1.0 - flightFraction);
@@ -336,30 +387,42 @@ export const TrailOverlay: React.FC<TrailOverlayProps> = ({
     applyFrame(0);
     animId = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(animId);
-  }, [id, dimensions.height, cx, startX, Y_offset, y0, y2, x0, x1, verticalPrefixLength, STEM_PHASE]);
+  }, [
+    id,
+    dimensions.height,
+    cx,
+    startX,
+    Y_offset,
+    y0,
+    y2,
+    x0,
+    x1,
+    verticalPrefixLength,
+    STEM_PHASE,
+  ]);
 
   const activeStrokeWidth = barWidth;
 
   return (
-    <div 
-      className="absolute inset-0 w-full h-full pointer-events-none z-[50] overflow-hidden"
-      id="transition-overlay-container"
+    <div
+      className='absolute inset-0 w-full h-full pointer-events-none z-[50] overflow-hidden'
+      id='transition-overlay-container'
     >
       {/* Cinematic Camera Viewport Container */}
       <div
         ref={cameraLayerRef}
-        className="absolute inset-0 w-full h-full pointer-events-none"
+        className='absolute inset-0 w-full h-full pointer-events-none'
         style={{ transform: `translateY(0px)`, transition: 'none' }}
       >
-        <svg className="w-full h-full block overflow-visible">
+        <svg className='w-full h-full block overflow-visible'>
           <path
             ref={pathRef}
             d={initialUnifiedPathD}
-            fill="none"
+            fill='none'
             stroke={color}
             strokeWidth={activeStrokeWidth}
-            strokeLinecap="round"
-            strokeLinejoin="round"
+            strokeLinecap='round'
+            strokeLinejoin='round'
             style={{
               strokeDasharray: '5000',
               strokeDashoffset: '5000',
@@ -370,8 +433,8 @@ export const TrailOverlay: React.FC<TrailOverlayProps> = ({
           <path
             ref={dummyFlightRef}
             d={initialFlightAndTransitionD}
-            fill="none"
-            stroke="none"
+            fill='none'
+            stroke='none'
             style={{ display: 'none' }}
           />
         </svg>
