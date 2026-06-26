@@ -172,9 +172,16 @@ export default function App() {
 
             <span
               id='brand-subtitle'
-              className='text-xl sm:text-2xl md:text-3xl text-slate-400 font-light tracking-wide text-center animate-subtitle-intro'
+              className='text-xl sm:text-2xl md:text-3xl text-slate-400 font-light tracking-wide text-center animate-subtitle-intro pb-4'
             >
-              conoce la historia épica de cada departamento.
+              Aquí no hay NPCs.
+            </span>
+            <span className='text-xl sm:text-2xl md:text-3xl text-slate-400 font-light tracking-wide text-center animate-subtitle-intro pb-4'>
+              Cada departamento es un personaje con habilidades únicas,
+              fortalezas y un papel clave para completar la misión.
+            </span>
+            <span className='text-xl sm:text-2xl md:text-3xl text-slate-400 font-light tracking-wide text-center animate-subtitle-intro'>
+              Elige tu personaje y que comience la partida.
             </span>
 
             {/* Unlocked special final button: Clean, magical, suggestion-oriented */}
