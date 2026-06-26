@@ -46,15 +46,15 @@ export const SoundBar: React.FC<SoundBarProps> = ({
 
     let animId: number;
     const startTimeStamp = Date.now();
-    const speed = 1.0 + Math.random() * 0.3; // Slower, highly subtle speed
+    const speed = 1.0 + Math.random() * 0.3;
+    const phaseOffset = index * 0.45;
 
     const tick = () => {
-      // Use elapsed time from start so wave starts exactly at 0 (sin(0) = 0), matching scale 1.0 perfectly
       const elapsed = (Date.now() - startTimeStamp) * 0.0015;
-      const wave = Math.sin(elapsed * speed);
-      
-      // Extremely subtle breathing scale variant (between 0.985 and 1.015)
-      const baseVariation = isSelected ? 0.01 : isHovered ? 0.012 : 0.015;
+      const wave = Math.sin(elapsed * speed + phaseOffset);
+
+      // Scale from bottom only — bars stay glued to the viewport edge
+      const baseVariation = isSelected ? 0.01 : isHovered ? 0.014 : 0.02;
       setBreatheScale(1 + wave * baseVariation);
 
       animId = requestAnimationFrame(tick);
@@ -62,7 +62,7 @@ export const SoundBar: React.FC<SoundBarProps> = ({
 
     tick();
     return () => cancelAnimationFrame(animId);
-  }, [isHovered, isSelected, isIntroComplete]);
+  }, [isHovered, isSelected, isIntroComplete, index]);
 
   const baseHeight = randomBaseHeight;
   

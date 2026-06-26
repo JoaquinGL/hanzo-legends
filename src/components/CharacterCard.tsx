@@ -495,7 +495,7 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({
       {/* Pop-Out Card Container - Layered at z-[55] (above TrailOverlay at z-[50]) */}
       <div 
         id="modal-container" 
-        className={`fixed inset-0 flex items-center justify-center p-4 z-[55] overflow-y-auto md:overflow-visible max-md:py-12 ${
+        className={`fixed inset-0 flex items-center justify-center p-4 z-[55] overflow-x-hidden overflow-y-auto md:overflow-y-visible max-md:py-12 ${
           isTransitionActive ? 'pointer-events-none' : 'pointer-events-auto'
         }`}
         onClick={(e) => {
@@ -507,7 +507,7 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({
         {/* Pop-Out Card Body - Predefined and locked to fit our flight trajectory bounds without layout jumps */}
         <div 
           id="modal-card-body"
-          className={`relative rounded-3xl w-[calc(100vw-32px)] max-w-[420px] md:max-w-none md:w-[900px] h-[540px] xs:h-[590px] md:h-[min(700px,calc(100vh-32px))] max-h-[calc(100vh-64px)] shadow-[0_24px_80px_rgba(15,23,42,0.12),0_2px_8px_rgba(15,23,42,0.04)] flex flex-col md:flex-row border border-slate-200/60 overflow-hidden z-10 select-none ${
+          className={`relative rounded-3xl w-[calc(100vw-32px)] max-w-[420px] md:max-w-none md:w-[900px] h-[600px] xs:h-[660px] md:h-[min(700px,calc(100vh-32px))] max-h-[calc(100vh-64px)] shadow-[0_24px_80px_rgba(15,23,42,0.12),0_2px_8px_rgba(15,23,42,0.04)] flex flex-col md:flex-row border border-slate-200/60 overflow-hidden z-10 select-none ${
             (isTransitionActive || hasTransitionedRef.current) ? '' : 'animate-scale-up'
           }`}
           style={{ 
@@ -533,7 +533,7 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({
         {/* Left Side: 3D Popout Illustration Container with clean transparent background and no ambient pulse shadow or gradients */}
         <div 
           id="character-art-panel" 
-          className="character-image-wrapper relative w-full h-[250px] md:h-full md:w-[42%] bg-transparent flex items-end justify-center overflow-visible z-10 shrink-0 select-none pb-0 pt-0 cursor-pointer"
+          className="character-image-wrapper relative w-full h-[280px] md:h-full md:w-[42%] bg-transparent flex items-end justify-center overflow-visible z-10 shrink-0 select-none mb-8 md:mb-0 pt-0 cursor-pointer"
           style={{
             opacity: contentOpacity,
             transform: contentTranslateY,
@@ -559,7 +559,7 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({
               id="modal-character-img"
               src={character.image} 
               alt={isFinale ? character.title : character.name}
-              className="character-image absolute bottom-0 left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0 md:-left-14 h-[250px] md:h-[135%] z-12 object-contain origin-bottom max-w-none md:max-w-none pointer-events-auto transition-all duration-300"
+              className="character-image absolute bottom-0 left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0 md:-left-14 h-[280px] md:h-[135%] z-12 object-contain origin-bottom max-w-none md:max-w-none pointer-events-auto transition-all duration-300"
               referrerPolicy="no-referrer"
             />
           </div>
@@ -568,14 +568,14 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({
         {/* Right Side: Hero sheet content */}
         <div 
           id="character-info-panel" 
-          className="w-full md:w-[58%] p-4 xs:p-6 sm:p-8 md:px-9 md:py-7 flex flex-col bg-transparent relative z-20 min-h-0 overflow-y-auto scrollbar-thin pb-6"
+          className="w-full md:w-[58%] p-4 xs:p-6 sm:p-8 md:px-9 md:py-7 flex flex-col bg-transparent relative z-20 min-h-0 min-w-0 max-w-full overflow-x-hidden overflow-y-auto scrollbar-thin"
           style={{
             opacity: contentOpacity,
             transform: contentTranslateY,
             transition: isTransitionActive ? 'none' : 'opacity 0.4s ease-out, transform 0.4s ease-out',
           }}
         >
-          <div className="relative z-25 max-w-md mx-auto md:max-w-none w-full px-2 sm:px-4 md:px-0 flex-1 flex flex-col min-h-0">
+          <div className="relative z-25 max-w-full md:max-w-none w-full min-w-0 px-2 sm:px-4 md:px-0 flex-1 flex flex-col min-h-0 mb-10 md:mb-0">
             <header className="shrink-0">
               {!isFinale && character.name && (
                 <span 
@@ -614,7 +614,7 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({
               <Paragraphs
                 paragraphs={character.description}
                 className={`text-slate-600 leading-relaxed text-base md:text-xs md:leading-snug ${
-                  isFinale ? 'mt-4 mb-2' : 'mb-5 md:mb-3'
+                  isFinale ? 'mt-4 mb-10 md:mb-2' : 'mb-10 md:mb-3'
                 }`}
               />
             </header>
@@ -623,7 +623,7 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({
               <div>
                 <SectionDivider label="Atributos Legendarios" />
 
-                <div className="space-y-4 md:space-y-3.5">
+                <div className="space-y-4 md:space-y-3.5 mb-8 md:mb-0">
                   {character.attributes.map((attr, index) => {
                     const barWidth = animate ? attr.value : 0;
                     const isTotalVisible = !!visibleTotals[attr.name];
