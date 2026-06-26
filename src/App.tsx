@@ -145,7 +145,7 @@ export default function App() {
         {/* Main Screen Layout content strictly centered in the upper portion */}
         <main
           id='main-content'
-          className='flex-1 w-full max-w-7xl mx-auto px-6 pt-12 pb-[38vh] flex flex-col justify-center items-center relative pointer-events-none transition-all duration-[800ms] ease-out'
+          className='flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 pt-8 sm:pt-10 pb-[36vh] sm:pb-[38vh] flex flex-col justify-center items-center relative pointer-events-none transition-all duration-[800ms] ease-out'
           style={{
             opacity: selectedChar
               ? Math.max(0, 1 - transitionProgress * 2.5)
@@ -160,34 +160,41 @@ export default function App() {
           }}
         >
           {/* Hero title block */}
-          <div className='text-center max-w-3xl flex flex-col items-center'>
+          <div className='text-center max-w-2xl sm:max-w-3xl flex flex-col items-center px-1'>
             <h1
               id='brand-title'
-              className='text-5xl sm:text-6xl md:text-5xl font-light text-slate-600 tracking-tight leading-none mb-1 text-center font-[Product Sans] animate-title-intro'
+              className='text-4xl sm:text-5xl md:text-5xl font-light text-slate-600 tracking-tight leading-none mb-1 text-center font-[Product Sans] animate-title-intro'
             >
               Hanzo Legends
             </h1>
 
-            <div className='w-32 h-[1px] bg-slate-300 my-4 opacity-70 origin-center animate-line-intro' />
+            <div className='w-24 sm:w-32 h-[1px] bg-slate-300 my-3 sm:my-4 opacity-70 origin-center animate-line-intro' />
 
-            <span
+            <div
               id='brand-subtitle'
-              className='text-xl sm:text-2xl md:text-3xl text-slate-400 font-light tracking-wide text-center animate-subtitle-intro pb-4'
+              className='text-slate-600 font-light text-center animate-subtitle-intro space-y-2 sm:space-y-3 text-base leading-relaxed sm:text-lg md:text-xl tracking-normal'
             >
-              Aquí no hay NPCs.
-            </span>
-            <span className='text-xl sm:text-2xl md:text-3xl text-slate-400 font-light tracking-wide text-center animate-subtitle-intro pb-4'>
-              Cada departamento es un personaje con habilidades únicas,
-              fortalezas y un papel clave para completar la misión.
-            </span>
-            <span className='text-xl sm:text-2xl md:text-3xl text-slate-400 font-light tracking-wide text-center animate-subtitle-intro'>
-              Elige tu personaje y que comience la partida.
-            </span>
+              <p>Aquí no hay NPCs.</p>
+              <p>
+                Cloud District nos ha dado la bienvenida de una manera super
+                original.
+              </p>
+              <p>
+                Ahora queremos devolver el saludo como mejor sabemos:
+                presentándonos con un poco de lore.
+              </p>
+              <p>
+                Cada departamento de Hanzo es un personaje con habilidades
+                únicas, fortalezas propias y alguna que otra habilidad pasiva
+                que todavía no sabemos explicar.
+              </p>
+              <p>Elige tu personaje y que comience la partida.</p>
+            </div>
 
             {/* Unlocked special final button: Clean, magical, suggestion-oriented */}
             {allVisited && !selectedChar && !isFinalAnimationActive && (
               <div
-                className='mt-8 pointer-events-auto flex justify-center'
+                className='mt-5 sm:mt-6 pointer-events-auto flex justify-center'
                 style={{
                   animation:
                     'fadeInSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
