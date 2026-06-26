@@ -338,99 +338,97 @@ export const FinalPathJourney: React.FC<FinalPathJourneyProps> = ({
             }}
             onClick={(e) => e.stopPropagation()}
           >
-          <div className='absolute -inset-10 rounded-full bg-slate-200/5 blur-3xl pointer-events-none' />
+            <div className='absolute -inset-10 rounded-full bg-slate-200/5 blur-3xl pointer-events-none' />
 
-          <button
-            type='button'
-            onClick={onClose}
-            className='absolute top-4 right-4 sm:top-5 sm:right-5 text-slate-400 hover:text-slate-700 active:scale-95 transition-colors p-2 z-20 flex items-center justify-center cursor-pointer'
-            aria-label='Cerrar'
-          >
-            <X className='w-7 h-7 stroke-[2]' />
-          </button>
-
-          {/* Illustration with 3D tilt on hover — fixed, no scroll */}
-          <div
-            className='relative w-full max-w-full md:w-[46%] lg:w-[48%] shrink-0 min-w-0 flex items-center justify-center overflow-x-hidden overflow-y-visible cursor-pointer select-none pb-12 md:pb-0 md:self-center'
-            style={{ perspective: '1000px' }}
-            onMouseMove={handleImageMouseMove}
-            onMouseLeave={handleImageMouseLeave}
-          >
-            <div
-              className='flex w-full max-w-full items-center justify-center overflow-hidden md:overflow-visible pointer-events-none p-1 sm:p-2 md:p-3'
-              style={{
-                transform: tilt.active
-                  ? `perspective(1000px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) scale3d(1.05, 1.05, 1.05)`
-                  : 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)',
-                transition: tilt.active
-                  ? 'transform 0.1s ease-out'
-                  : 'transform 0.6s cubic-bezier(0.25, 1, 0.4, 1)',
-                transformOrigin: 'center center',
-              }}
+            <button
+              type='button'
+              onClick={onClose}
+              className='absolute top-4 right-4 sm:top-5 sm:right-5 text-slate-400 hover:text-slate-700 active:scale-95 transition-colors p-2 z-20 flex items-center justify-center cursor-pointer'
+              aria-label='Cerrar'
             >
-              <img
-                src={finalImage}
-                alt='El Samurai de la Nube'
-                className='max-h-[min(220px,34vh)] xs:max-h-[min(260px,38vh)] sm:max-h-[min(300px,40vh)] md:max-h-[min(520px,calc(100vh-280px))] lg:max-h-[min(560px,calc(100vh-260px))] max-w-full w-auto h-auto object-contain object-center pointer-events-auto animate-[logoRevealScaleIn_800ms_cubic-bezier(0.16,1,0.3,1)_forwards]'
-              />
-            </div>
-          </div>
+              <X className='w-7 h-7 stroke-[2]' />
+            </button>
 
-          {/* Text column — title + description scroll; footer button fixed */}
-          <div className='flex flex-col flex-1 min-w-0 min-h-0 w-full max-w-full text-left pb-12 md:pb-0'>
+            {/* Illustration with 3D tilt on hover — fixed, no scroll */}
             <div
-              className='flex-1 min-h-0 overflow-x-hidden overflow-y-auto scrollbar-thin pr-1 -mr-1 pb-16 md:pb-0'
+              className='relative w-full max-w-full md:w-[46%] lg:w-[48%] shrink-0 min-w-0 flex items-center justify-center overflow-x-hidden overflow-y-visible cursor-pointer select-none pb-12 md:pb-0 md:self-center'
+              style={{ perspective: '1000px' }}
+              onMouseMove={handleImageMouseMove}
+              onMouseLeave={handleImageMouseLeave}
             >
-              <h2
-                className='text-4xl sm:text-[2.5rem] md:text-3xl font-headline font-semibold text-slate-800 tracking-tight leading-tight shrink-0 mb-4 md:mb-3 pr-10'
-                style={{
-                  animation:
-                    'logoRevealSlideUp 800ms cubic-bezier(0.16, 1, 0.3, 1) 400ms forwards',
-                  opacity: 0,
-                }}
-              >
-                El Samurai de la Nube
-              </h2>
-
               <div
-                className='text-slate-600 leading-relaxed text-base md:text-xs md:leading-snug mb-10 md:mb-0'
+                className='flex w-full max-w-full items-center justify-center overflow-hidden md:overflow-visible pointer-events-none p-1 sm:p-2 md:p-3'
                 style={{
-                  animation:
-                    'logoRevealSlideUp 800ms cubic-bezier(0.16, 1, 0.3, 1) 600ms forwards',
-                  opacity: 0,
+                  transform: tilt.active
+                    ? `perspective(1000px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) scale3d(1.05, 1.05, 1.05)`
+                    : 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)',
+                  transition: tilt.active
+                    ? 'transform 0.1s ease-out'
+                    : 'transform 0.6s cubic-bezier(0.25, 1, 0.4, 1)',
+                  transformOrigin: 'center center',
                 }}
               >
-                {FINAL_DESCRIPTION.map((paragraph, index) => (
-                  <p
-                    key={paragraph.slice(0, 24)}
-                    className={index > 0 ? 'mt-2' : ''}
-                  >
-                    {paragraph}
-                  </p>
-                ))}
+                <img
+                  src={finalImage}
+                  alt='El Samurai de la Nube'
+                  className='max-h-[min(220px,34vh)] xs:max-h-[min(260px,38vh)] sm:max-h-[min(300px,40vh)] md:max-h-[min(520px,calc(100vh-280px))] lg:max-h-[min(560px,calc(100vh-260px))] max-w-full w-auto h-auto object-contain object-center pointer-events-auto animate-[logoRevealScaleIn_800ms_cubic-bezier(0.16,1,0.3,1)_forwards]'
+                />
               </div>
             </div>
 
-            <div
-              className='w-full flex flex-col items-start shrink-0 pt-5 md:pt-6 transition-all duration-700'
-              style={{
-                opacity: isFinished ? 1 : 0,
-                transform: isFinished
-                  ? 'translateY(0) scale(1)'
-                  : 'translateY(10px) scale(0.98)',
-                pointerEvents: isFinished ? 'auto' : 'none',
-              }}
-            >
-              <button
-                onClick={onReset}
-                className='flex items-center gap-2 px-6 py-2.5 rounded-full border border-slate-300 bg-white text-slate-700 hover:text-slate-900 shadow-[0_4px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_12px_24px_rgba(0,0,0,0.12)] hover:border-slate-400 hover:scale-105 active:scale-95 cursor-pointer transition-all duration-300 font-sans text-base md:text-xs font-semibold uppercase tracking-wider'
+            {/* Text column — title + description scroll; footer button fixed */}
+            <div className='flex flex-col flex-1 min-w-0 min-h-0 w-full max-w-full text-left pb-12 md:pb-0'>
+              <div className='flex-1 min-h-0 overflow-x-hidden overflow-y-auto scrollbar-thin pr-1 -mr-1 pb-16 md:pb-0'>
+                <h2
+                  className='text-4xl sm:text-[2.5rem] md:text-3xl font-headline font-semibold text-slate-800 tracking-tight leading-tight shrink-0 mb-4 md:mb-3 pr-10'
+                  style={{
+                    animation:
+                      'logoRevealSlideUp 800ms cubic-bezier(0.16, 1, 0.3, 1) 400ms forwards',
+                    opacity: 0,
+                  }}
+                >
+                  El Samurai de la Nube
+                </h2>
+
+                <div
+                  className='text-slate-600 leading-relaxed text-base md:text-xs md:leading-snug mb-10 md:mb-0'
+                  style={{
+                    animation:
+                      'logoRevealSlideUp 800ms cubic-bezier(0.16, 1, 0.3, 1) 600ms forwards',
+                    opacity: 0,
+                  }}
+                >
+                  {FINAL_DESCRIPTION.map((paragraph, index) => (
+                    <p
+                      key={paragraph.slice(0, 24)}
+                      className={index > 0 ? 'mt-2' : ''}
+                    >
+                      {paragraph}
+                    </p>
+                  ))}
+                </div>
+              </div>
+
+              <div
+                className='w-full flex flex-col items-start shrink-0 pt-5 md:pt-6 transition-all duration-700'
+                style={{
+                  opacity: isFinished ? 1 : 0,
+                  transform: isFinished
+                    ? 'translateY(0) scale(1)'
+                    : 'translateY(10px) scale(0.98)',
+                  pointerEvents: isFinished ? 'auto' : 'none',
+                }}
               >
-                <RefreshCw className='w-3 h-3 animate-spin-reverse' />
-                Repetir experiencia
-              </button>
+                <button
+                  onClick={onReset}
+                  className='flex items-center gap-2 px-6 py-2.5 rounded-full border border-slate-300 bg-white text-slate-700 hover:text-slate-900 shadow-[0_4px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_12px_24px_rgba(0,0,0,0.12)] hover:border-slate-400 hover:scale-105 active:scale-95 cursor-pointer transition-all duration-300 font-sans text-base md:text-xs font-semibold uppercase tracking-wider'
+                >
+                  <RefreshCw className='w-3 h-3 animate-spin-reverse' />
+                  Repetir experiencia
+                </button>
+              </div>
             </div>
           </div>
-        </div>
         </div>
       )}
 
